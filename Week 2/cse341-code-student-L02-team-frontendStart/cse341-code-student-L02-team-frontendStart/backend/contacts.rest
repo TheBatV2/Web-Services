@@ -1,0 +1,47 @@
+### Test Health Endpoint
+GET http://localhost:8080/health
+Content-Type: application/json
+
+###
+
+### Test Professional Endpoint (existing)
+GET http://localhost:8080/professional
+Content-Type: application/json
+
+###
+
+### Get All Contacts
+GET http://localhost:8080/contacts
+Content-Type: application/json
+
+###
+
+### Get Single Contact by ID - Stephenie Barbre
+GET http://localhost:8080/contacts/68d835a4a4cd1b2a2a21ce12
+Content-Type: application/json
+
+###
+
+### Get Single Contact by ID - Zachary Barbre  
+GET http://localhost:8080/contacts/68d835b7a4cd1b2a2a21ce15
+Content-Type: application/json
+
+###
+
+### Get Single Contact by ID - Evelyn Barbre
+GET http://localhost:8080/contacts/68d835c3a4cd1b2a2a21ce17
+Content-Type: application/json
+
+###
+
+### Test with Invalid Contact ID (should return 400)
+GET http://localhost:8080/contacts/invalid-id
+Content-Type: application/json
+
+###
+
+### Test with Non-existent Contact ID (should return 404)
+GET http://localhost:8080/contacts/507f1f77bcf86cd799439011
+Content-Type: application/json
+
+###
