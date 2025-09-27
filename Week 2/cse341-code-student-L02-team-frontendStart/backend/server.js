@@ -48,6 +48,24 @@ app.get('/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
 });
 
+// Root route - API information
+app.get('/', (req, res) => {
+  res.json({
+    message: 'CSE 341 Web Services API',
+    endpoints: {
+      professional: '/professional',
+      contacts: '/contacts',
+      health: '/health'
+    },
+    documentation: {
+      professional: 'GET /professional - Returns professional information',
+      allContacts: 'GET /contacts - Returns all contacts',
+      singleContact: 'GET /contacts/:id - Returns a specific contact by ID',
+      health: 'GET /health - Server health check'
+    }
+  });
+});
+
 // Routes
 app.use('/contacts', contactsRoute);
 
