@@ -61,6 +61,9 @@ app.get('/', (req, res) => {
       professional: 'GET /professional - Returns professional information',
       allContacts: 'GET /contacts - Returns all contacts',
       singleContact: 'GET /contacts/:id - Returns a specific contact by ID',
+      createContact: 'POST /contacts - Creates a new contact (requires: firstName, lastName, email, favoriteColor, birthday)',
+      updateContact: 'PUT /contacts/:id - Updates an existing contact (requires all fields)',
+      deleteContact: 'DELETE /contacts/:id - Deletes a contact by ID',
       health: 'GET /health - Server health check'
     }
   });
