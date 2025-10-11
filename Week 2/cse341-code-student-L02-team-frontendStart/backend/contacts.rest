@@ -51,7 +51,7 @@ POST http://localhost:8080/contacts
 Content-Type: application/json
 
 {
-  "firstName": "John",
+  "firstName": "Jonny",
   "lastName": "Doe",
   "email": "john.doe@email.com",
   "favoriteColor": "blue",
@@ -102,7 +102,7 @@ Content-Type: application/json
 
 ###
 
-### DELETE CONTACT (DELETE) - Use an actual ID from your database
+### DELETE CONTACT (DELETE) - Use an actual ID from the database
 DELETE http://localhost:8080/contacts/68d835c3a4cd1b2a2a21ce17
 
 ###

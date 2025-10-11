@@ -1,15 +1,107 @@
 require('dotenv').config({ path: __dirname + '/.env' });
 const express = require('express');
 const cors = require('cors');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 const database = require('./database/database');
 const contactsRoute = require('./routes/contacts');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Swagger configuration
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'CSE 341 Web Services API',
+      version: '1.0.0',
+      description: 'A comprehensive API for managing contacts and professional information',
+      contact: {
+        name: 'Spencer Barbre',
+        email: 'spencer@example.com'
+      }
+    },
+    servers: [
+      {
+        url: 'http://localhost:8080',
+        description: 'Development server'
+      },
+      {
+        url: 'https://your-render-app.onrender.com',
+        description: 'Production server'
+      }
+    ],
+    components: {
+      schemas: {
+        Contact: {
+          type: 'object',
+          required: ['firstName', 'lastName', 'email', 'favoriteColor', 'birthday'],
+          properties: {
+            _id: {
+              type: 'string',
+              description: 'MongoDB ObjectId',
+              example: '507f1f77bcf86cd799439011'
+            },
+            firstName: {
+              type: 'string',
+              description: 'First name of the contact',
+              example: 'John'
+            },
+            lastName: {
+              type: 'string',
+              description: 'Last name of the contact',
+              example: 'Doe'
+            },
+            email: {
+              type: 'string',
+              format: 'email',
+              description: 'Email address of the contact',
+              example: 'john.doe@example.com'
+            },
+            favoriteColor: {
+              type: 'string',
+              description: 'Favorite color of the contact',
+              example: 'blue'
+            },
+            birthday: {
+              type: 'string',
+              description: 'Birthday of the contact in MM/DD/YYYY format',
+              example: '01/15/1990'
+            }
+          }
+        },
+        Error: {
+          type: 'object',
+          properties: {
+            error: {
+              type: 'string',
+              description: 'Error message'
+            },
+            message: {
+              type: 'string',
+              description: 'Additional error details'
+            }
+          }
+        }
+      }
+    }
+  },
+  apis: ['./server.js', './routes/*.js']
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'CSE 341 API Documentation'
+}));
 
 // Professional data 
 const professionalData = {
@@ -33,6 +125,72 @@ const professionalData = {
   }
 };
 
+/**
+ * @swagger
+ * /professional:
+ *   get:
+ *     summary: Get professional information
+ *     description: Returns professional data including name, image, descriptions, and social links
+ *     tags:
+ *       - Professional
+ *     responses:
+ *       200:
+ *         description: Professional data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 professionalName:
+ *                   type: string
+ *                   example: "Spencer Barbre"
+ *                 base64Image:
+ *                   type: string
+ *                   description: "Base64 encoded image string"
+ *                 nameLink:
+ *                   type: object
+ *                   properties:
+ *                     firstName:
+ *                       type: string
+ *                       example: "Spencer"
+ *                     url:
+ *                       type: string
+ *                       example: "https://example.com"
+ *                 primaryDescription:
+ *                   type: string
+ *                   example: " - Full Stack Developer"
+ *                 workDescription1:
+ *                   type: string
+ *                 workDescription2:
+ *                   type: string
+ *                 linkTitleText:
+ *                   type: string
+ *                   example: "Connect with me:"
+ *                 linkedInLink:
+ *                   type: object
+ *                   properties:
+ *                     text:
+ *                       type: string
+ *                       example: "LinkedIn Profile"
+ *                     link:
+ *                       type: string
+ *                       example: "https://linkedin.com/in/spencerbarbre"
+ *                 githubLink:
+ *                   type: object
+ *                   properties:
+ *                     text:
+ *                       type: string
+ *                       example: "GitHub Profile"
+ *                     link:
+ *                       type: string
+ *                       example: "https://github.com/spencerbarbre"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Routes
 app.get('/professional', (req, res) => {
   try {
@@ -43,11 +201,70 @@ app.get('/professional', (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Health check endpoint
+ *     description: Returns the current status and timestamp to verify server is running
+ *     tags:
+ *       - Health
+ *     responses:
+ *       200:
+ *         description: Server is running successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Server is running"
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2023-10-11T14:30:00.000Z"
+ */
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
 });
 
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: API information and available endpoints
+ *     description: Returns a list of all available API endpoints and their descriptions
+ *     tags:
+ *       - API Info
+ *     responses:
+ *       200:
+ *         description: API information retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "CSE 341 Web Services API"
+ *                 endpoints:
+ *                   type: object
+ *                   properties:
+ *                     professional:
+ *                       type: string
+ *                       example: "/professional"
+ *                     contacts:
+ *                       type: string
+ *                       example: "/contacts"
+ *                     health:
+ *                       type: string
+ *                       example: "/health"
+ *                 documentation:
+ *                   type: object
+ *                   description: "Detailed descriptions of each endpoint"
+ */
 // Root route - API information
 app.get('/', (req, res) => {
   res.json({
@@ -55,7 +272,8 @@ app.get('/', (req, res) => {
     endpoints: {
       professional: '/professional',
       contacts: '/contacts',
-      health: '/health'
+      health: '/health',
+      swagger: '/api-docs'
     },
     documentation: {
       professional: 'GET /professional - Returns professional information',
@@ -64,7 +282,8 @@ app.get('/', (req, res) => {
       createContact: 'POST /contacts - Creates a new contact (requires: firstName, lastName, email, favoriteColor, birthday)',
       updateContact: 'PUT /contacts/:id - Updates an existing contact (requires all fields)',
       deleteContact: 'DELETE /contacts/:id - Deletes a contact by ID',
-      health: 'GET /health - Server health check'
+      health: 'GET /health - Server health check',
+      swagger: 'GET /api-docs - Interactive Swagger API documentation'
     }
   });
 });

@@ -1,0 +1,371 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "LDS Temple API",
+    "description": "API for managing LDS temple information for BYU-Idaho WDD230 student projects",
+    "version": "1.0.0"
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "securityDefinitions": {
+    "apiKeyAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "apiKey",
+      "description": "API key required for accessing temple data"
+    }
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/temples/": {
+      "get": {
+        "summary": "Get all temples",
+        "description": "Retrieve all temples from the database. Requires API key in header.",
+        "parameters": [
+          {
+            "name": "apiKey",
+            "in": "header",
+            "description": "API key for authentication",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all temples",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "items": {
+                  "$ref": "#/definitions/Temple"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid API key",
+            "schema": {
+              "$ref": "#/definitions/ApiKeyError"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Create a new temple",
+        "description": "Create a new temple entry in the database",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Temple data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TempleInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Temple created successfully",
+            "schema": {
+              "$ref": "#/definitions/Temple"
+            }
+          },
+          "400": {
+            "description": "Bad request - missing required fields",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete all temples",
+        "description": "Delete all temples from the database",
+        "responses": {
+          "200": {
+            "description": "All temples deleted successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "X Temples were deleted successfully!"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/temples/{temple_id}": {
+      "get": {
+        "summary": "Get temple by ID",
+        "description": "Retrieve a specific temple by its temple_id. Requires API key in header.",
+        "parameters": [
+          {
+            "name": "temple_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Temple ID"
+          },
+          {
+            "name": "apiKey",
+            "in": "header",
+            "description": "API key for authentication",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Temple found",
+            "schema": {
+              "$ref": "#/definitions/Temple"
+            }
+          },
+          "401": {
+            "description": "Invalid API key",
+            "schema": {
+              "$ref": "#/definitions/ApiKeyError"
+            }
+          },
+          "404": {
+            "description": "Temple not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update temple by ID",
+        "description": "Update a temple by its temple_id",
+        "parameters": [
+          {
+            "name": "temple_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Temple ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Temple data to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TempleInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Temple   successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Temple was updated successfully."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - no data provided",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Temple not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete temple by ID",
+        "description": "Delete a temple by its temple_id",
+        "parameters": [
+          {
+            "name": "temple_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Temple ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Temple   successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Temple was deleted successfully!"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "404": {
+            "description": "Temple not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Temple": {
+      "type": "object",
+      "properties": {
+        "temple_id": {
+          "type": "number",
+          "example": 1
+        },
+        "name": {
+          "type": "string",
+          "example": "Example Temple"
+        },
+        "location": {
+          "type": "string",
+          "example": "Example City, State, Country"
+        },
+        "dedicated": {
+          "type": "string",
+          "example": "1 January 2000"
+        },
+        "additionalInfo": {
+          "type": "boolean",
+          "example": false
+        }
+      }
+    },
+    "TempleInput": {
+      "type": "object",
+      "properties": {
+        "temple_id": {
+          "type": "number",
+          "example": 1
+        },
+        "name": {
+          "type": "string",
+          "example": "Example Temple"
+        },
+        "location": {
+          "type": "string",
+          "example": "Example City, State, Country"
+        },
+        "dedicated": {
+          "type": "string",
+          "example": "1 January 2000"
+        },
+        "additionalInfo": {
+          "type": "boolean",
+          "example": false
+        }
+      },
+      "required": [
+        "temple_id",
+        "name",
+        "location"
+      ]
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Error message"
+        }
+      }
+    },
+    "ApiKeyError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Invalid apiKey, please read the documentation."
+        }
+      }
+    }
+  }
+}
