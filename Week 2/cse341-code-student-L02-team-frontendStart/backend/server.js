@@ -28,7 +28,7 @@ const swaggerOptions = {
         description: 'Development server'
       },
       {
-        url: 'https://your-render-app.onrender.com',
+        url: 'https://web-services-jua6.onrender.com',
         description: 'Production server'
       }
     ],
