@@ -4,8 +4,20 @@ Content-Type: application/json
 
 ###
 
+### Test Health Endpoint - RENDER PRODUCTION
+GET https://web-services-jua6.onrender.com/health
+Content-Type: application/json
+
+###
+
 ### Test Professional Endpoint (existing)
 GET http://localhost:8080/professional
+Content-Type: application/json
+
+###
+
+### Test Professional Endpoint - RENDER PRODUCTION
+GET https://web-services-jua6.onrender.com/professional
 Content-Type: application/json
 
 ###
@@ -16,8 +28,20 @@ Content-Type: application/json
 
 ###
 
+### Get All Contacts - RENDER PRODUCTION
+GET https://web-services-jua6.onrender.com/contacts
+Content-Type: application/json
+
+###
+
 ### Get Single Contact by ID - Stephenie Barbre
 GET http://localhost:8080/contacts/68d835a4a4cd1b2a2a21ce12
+Content-Type: application/json
+
+###
+
+### Get Single Contact by ID - Stephenie Barbre - RENDER PRODUCTION
+GET https://web-services-jua6.onrender.com/contacts/68d835a4a4cd1b2a2a21ce12
 Content-Type: application/json
 
 ###
@@ -28,8 +52,20 @@ Content-Type: application/json
 
 ###
 
+### Get Single Contact by ID - Zachary Barbre - RENDER PRODUCTION
+GET https://web-services-jua6.onrender.com/contacts/68d835b7a4cd1b2a2a21ce15
+Content-Type: application/json
+
+###
+
 ### Get Single Contact by ID - Evelyn Barbre
 GET http://localhost:8080/contacts/68d835c3a4cd1b2a2a21ce17
+Content-Type: application/json
+
+###
+
+### Get Single Contact by ID - Evelyn Barbre - RENDER PRODUCTION
+GET https://web-services-jua6.onrender.com/contacts/68d835c3a4cd1b2a2a21ce17
 Content-Type: application/json
 
 ###
@@ -60,6 +96,20 @@ Content-Type: application/json
 
 ###
 
+### CREATE NEW CONTACT (POST) - RENDER PRODUCTION
+POST https://web-services-jua6.onrender.com/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Jonny",
+  "lastName": "Doe",
+  "email": "john.doe@email.com",
+  "favoriteColor": "blue",
+  "birthday": "01/15/1990"
+}
+
+###
+
 ### CREATE ANOTHER CONTACT (POST)
 POST http://localhost:8080/contacts
 Content-Type: application/json
@@ -74,8 +124,36 @@ Content-Type: application/json
 
 ###
 
+### CREATE ANOTHER CONTACT (POST) - RENDER PRODUCTION
+POST https://web-services-jua6.onrender.com/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "email": "jane.smith@email.com",
+  "favoriteColor": "green",
+  "birthday": "03/22/1995"
+}
+
+###
+
 ### UPDATE EXISTING CONTACT (PUT) - Use an actual ID from your database
 PUT http://localhost:8080/contacts/68d835a4a4cd1b2a2a21ce12
+Content-Type: application/json
+
+{
+  "firstName": "Stephenie",
+  "lastName": "Barbre",
+  "email": "stephenie.updated@email.com",
+  "favoriteColor": "purple",
+  "birthday": "05/10/1985"
+}
+
+###
+
+### UPDATE EXISTING CONTACT (PUT) - RENDER PRODUCTION
+PUT https://web-services-jua6.onrender.com/contacts/68d835a4a4cd1b2a2a21ce12
 Content-Type: application/json
 
 {
@@ -107,8 +185,18 @@ DELETE http://localhost:8080/contacts/68d835c3a4cd1b2a2a21ce17
 
 ###
 
+### DELETE CONTACT (DELETE) - RENDER PRODUCTION
+DELETE https://web-services-jua6.onrender.com/contacts/68d835c3a4cd1b2a2a21ce17
+
+###
+
 ### DELETE NON-EXISTENT CONTACT (DELETE) - Should return 404
 DELETE http://localhost:8080/contacts/507f1f77bcf86cd799439011
+
+###
+
+### DELETE NON-EXISTENT CONTACT (DELETE) - RENDER PRODUCTION
+DELETE https://web-services-jua6.onrender.com/contacts/507f1f77bcf86cd799439011
 
 ###
 
