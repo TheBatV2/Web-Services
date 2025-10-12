@@ -1,0 +1,85 @@
+### Temple API Routes
+
+# Base URL variables
+@localhost = http://localhost:8080
+@render = https://your-app-name.onrender.com
+
+### Get all temples (Localhost)
+GET {{localhost}}/temples
+
+### Get all temples (Render)
+GET {{render}}/temples
+
+### Get temple by ID (Localhost)
+GET {{localhost}}/temples/1
+
+### Get temple by ID (Render)
+GET {{render}}/temples/1
+
+### Create new temple (Localhost)
+POST {{localhost}}/temples
+Content-Type: application/json
+
+{
+  "temple_id": "test_temple_123",
+  "name": "Test Temple",
+  "description": "A test temple for demonstration",
+  "location": "Test City, Test State"
+}
+
+### Create new temple (Render)
+POST {{render}}/temples
+Content-Type: application/json
+
+{
+  "temple_id": "test_temple_123",
+  "name": "Test Temple",
+  "description": "A test temple for demonstration",
+  "location": "Test City, Test State"
+}
+
+### Update temple by ID (Localhost)
+PUT {{localhost}}/temples/1
+Content-Type: application/json
+
+{
+  "temple_id": "updated_temple_123",
+  "name": "Updated Temple Name",
+  "description": "Updated temple description",
+  "location": "Updated City, Updated State"
+}
+
+### Update temple by ID (Render)
+PUT {{render}}/temples/1
+Content-Type: application/json
+
+{
+  "temple_id": "updated_temple_123",
+  "name": "Updated Temple Name",
+  "description": "Updated temple description",
+  "location": "Updated City, Updated State"
+}
+
+### Delete temple by ID (Localhost)
+DELETE {{localhost}}/temples/1
+
+### Delete temple by ID (Render)
+DELETE {{render}}/temples/1
+
+### Delete all temples (Localhost)
+DELETE {{localhost}}/temples
+
+### Delete all temples (Render)
+DELETE {{render}}/temples
+
+### Documentation endpoint (Localhost)
+GET {{localhost}}/
+
+### Documentation endpoint (Render)
+GET {{render}}/
+
+### Swagger API Documentation (Localhost)
+GET {{localhost}}/api-docs
+
+### Swagger API Documentation (Render)
+GET {{render}}/api-docs
