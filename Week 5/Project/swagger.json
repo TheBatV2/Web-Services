@@ -1,5 +1,4 @@
 {
-  "swagger": "2.0",
   "openapi": "3.0.0",
   "info": {
     "title": "Recipe Management API",
@@ -73,13 +72,62 @@
         }
       },
       "post": {
-        "description": "",
+        "description": "Create a new recipe",
+        "tags": ["Recipes"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Recipe"
+              },
+              "example": {
+                "title": "Fresh Tomato Salsa",
+                "description": "A vibrant and fresh homemade salsa perfect for chips or tacos",
+                "ingredients": [
+                  "4 large ripe tomatoes, diced",
+                  "1 medium red onion, finely chopped",
+                  "2-3 jalapeño peppers, seeded and minced",
+                  "1/4 cup fresh cilantro, chopped",
+                  "2 cloves garlic, minced",
+                  "2 tablespoons lime juice",
+                  "1 teaspoon salt",
+                  "1/2 teaspoon ground cumin"
+                ],
+                "instructions": [
+                  "Dice tomatoes and place in a large bowl",
+                  "Add finely chopped red onion",
+                  "Remove seeds from jalapeños and mince finely",
+                  "Chop fresh cilantro and mince garlic",
+                  "Add jalapeños, cilantro, and garlic to tomatoes",
+                  "Squeeze fresh lime juice over mixture",
+                  "Add salt and cumin",
+                  "Mix all ingredients thoroughly",
+                  "Let sit for 30 minutes to allow flavors to meld",
+                  "Taste and adjust seasoning as needed"
+                ],
+                "cookTime": 15,
+                "difficulty": "Easy",
+                "category": "Appetizer",
+                "nutrition": {
+                  "calories": 25,
+                  "protein": 1,
+                  "carbs": 6,
+                  "fat": 0
+                },
+                "tags": ["vegan", "gluten-free", "healthy", "mexican", "appetizer"],
+                "servings": 8,
+                "isPublic": true
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Recipe created successfully"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request - Validation failed"
           },
           "500": {
             "description": "Internal Server Error"
