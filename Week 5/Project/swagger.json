@@ -1,27 +1,26 @@
 {
   "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "Recipe Management API",
     "description": "API for managing recipes with full CRUD operations",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
-  "basePath": "/api",
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    },
+    {
+      "url": "https://your-app-name.onrender.com",
+      "description": "Production server"
+    }
+  ],
   "tags": [
     {
       "name": "Recipes",
       "description": "Recipe management endpoints"
     }
-  ],
-  "schemes": [
-    "http",
-    "https"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
   ],
   "paths": {
     "/": {
@@ -166,355 +165,357 @@
       }
     }
   },
-  "definitions": {
-    "Recipe": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "example": "object"
-        },
-        "required": {
-          "type": "array",
-          "example": [
-            "title",
-            "description",
-            "ingredients",
-            "instructions",
-            "cookTime",
-            "difficulty",
-            "category",
-            "servings"
-          ],
-          "items": {
-            "type": "string"
-          }
-        },
+  "components": {
+    "schemas": {
+      "Recipe": {
+        "type": "object",
         "properties": {
-          "type": "object",
+          "type": {
+            "type": "string",
+            "example": "object"
+          },
+          "required": {
+            "type": "array",
+            "example": [
+              "title",
+              "description",
+              "ingredients",
+              "instructions",
+              "cookTime",
+              "difficulty",
+              "category",
+              "servings"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
           "properties": {
-            "title": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "string"
-                },
-                "example": {
-                  "type": "string",
-                  "example": "Chocolate Chip Cookies"
-                }
-              }
-            },
-            "description": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "string"
-                },
-                "example": {
-                  "type": "string",
-                  "example": "Delicious homemade chocolate chip cookies"
-                }
-              }
-            },
-            "ingredients": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "array"
-                },
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "example": "string"
-                    }
-                  }
-                },
-                "example": {
-                  "type": "array",
-                  "example": [
-                    "2 cups flour",
-                    "1 cup sugar",
-                    "1/2 cup chocolate chips"
-                  ],
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "instructions": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "array"
-                },
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "example": "string"
-                    }
-                  }
-                },
-                "example": {
-                  "type": "array",
-                  "example": [
-                    "Mix dry ingredients",
-                    "Add wet ingredients",
-                    "Bake for 12 minutes"
-                  ],
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "cookTime": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "number"
-                },
-                "example": {
-                  "type": "number",
-                  "example": 25
-                }
-              }
-            },
-            "difficulty": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "string"
-                },
-                "enum": {
-                  "type": "array",
-                  "example": [
-                    "Easy",
-                    "Medium",
-                    "Hard"
-                  ],
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "example": {
-                  "type": "string",
-                  "example": "Easy"
-                }
-              }
-            },
-            "category": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "string"
-                },
-                "enum": {
-                  "type": "array",
-                  "example": [
-                    "Appetizer",
-                    "Main Course",
-                    "Dessert",
-                    "Beverage",
-                    "Snack",
-                    "Breakfast"
-                  ],
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "example": {
-                  "type": "string",
-                  "example": "Dessert"
-                }
-              }
-            },
-            "nutrition": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "object"
-                },
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "object",
                 "properties": {
-                  "type": "object",
-                  "properties": {
-                    "calories": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "number"
-                        },
-                        "example": {
-                          "type": "number",
-                          "example": 250
-                        }
-                      }
-                    },
-                    "protein": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "number"
-                        },
-                        "example": {
-                          "type": "number",
-                          "example": 3
-                        }
-                      }
-                    },
-                    "carbs": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "number"
-                        },
-                        "example": {
-                          "type": "number",
-                          "example": 35
-                        }
-                      }
-                    },
-                    "fat": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "number"
-                        },
-                        "example": {
-                          "type": "number",
-                          "example": 12
-                        }
-                      }
-                    }
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "Chocolate Chip Cookies"
                   }
                 }
-              }
-            },
-            "tags": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "array"
-                },
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "example": "string"
-                    }
+              },
+              "description": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "Delicious homemade chocolate chip cookies"
                   }
-                },
-                "example": {
-                  "type": "array",
-                  "example": [
-                    "vegetarian",
-                    "dessert",
-                    "baking"
-                  ],
+                }
+              },
+              "ingredients": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "array"
+                  },
                   "items": {
-                    "type": "string"
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "example": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "type": "array",
+                    "example": [
+                      "2 cups flour",
+                      "1 cup sugar",
+                      "1/2 cup chocolate chips"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
-              }
-            },
-            "servings": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "number"
-                },
-                "example": {
-                  "type": "number",
-                  "example": 24
+              },
+              "instructions": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "array"
+                  },
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "example": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "type": "array",
+                    "example": [
+                      "Mix dry ingredients",
+                      "Add wet ingredients",
+                      "Bake for 12 minutes"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  }
                 }
-              }
-            },
-            "isPublic": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "boolean"
-                },
-                "example": {
-                  "type": "boolean",
-                  "example": true
+              },
+              "cookTime": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "number"
+                  },
+                  "example": {
+                    "type": "number",
+                    "example": 25
+                  }
+                }
+              },
+              "difficulty": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "enum": {
+                    "type": "array",
+                    "example": [
+                      "Easy",
+                      "Medium",
+                      "Hard"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "Easy"
+                  }
+                }
+              },
+              "category": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "enum": {
+                    "type": "array",
+                    "example": [
+                      "Appetizer",
+                      "Main Course",
+                      "Dessert",
+                      "Beverage",
+                      "Snack",
+                      "Breakfast"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "Dessert"
+                  }
+                }
+              },
+              "nutrition": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "object"
+                  },
+                  "properties": {
+                    "type": "object",
+                    "properties": {
+                      "calories": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "example": "number"
+                          },
+                          "example": {
+                            "type": "number",
+                            "example": 250
+                          }
+                        }
+                      },
+                      "protein": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "example": "number"
+                          },
+                          "example": {
+                            "type": "number",
+                            "example": 3
+                          }
+                        }
+                      },
+                      "carbs": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "example": "number"
+                          },
+                          "example": {
+                            "type": "number",
+                            "example": 35
+                          }
+                        }
+                      },
+                      "fat": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "example": "number"
+                          },
+                          "example": {
+                            "type": "number",
+                            "example": 12
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "tags": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "array"
+                  },
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "example": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "type": "array",
+                    "example": [
+                      "vegetarian",
+                      "dessert",
+                      "baking"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "servings": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "number"
+                  },
+                  "example": {
+                    "type": "number",
+                    "example": 24
+                  }
+                }
+              },
+              "isPublic": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "boolean"
+                  },
+                  "example": {
+                    "type": "boolean",
+                    "example": true
+                  }
                 }
               }
             }
           }
         }
-      }
-    },
-    "Error": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "example": "object"
-        },
+      },
+      "Error": {
+        "type": "object",
         "properties": {
-          "type": "object",
+          "type": {
+            "type": "string",
+            "example": "object"
+          },
           "properties": {
-            "success": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "boolean"
-                },
-                "example": {
-                  "type": "boolean",
-                  "example": false
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "boolean"
+                  },
+                  "example": {
+                    "type": "boolean",
+                    "example": false
+                  }
                 }
-              }
-            },
-            "error": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "string"
-                },
-                "example": {
-                  "type": "string",
-                  "example": "Error message"
+              },
+              "error": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "Error message"
+                  }
                 }
-              }
-            },
-            "details": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "array"
-                },
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "example": "string"
+              },
+              "details": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "array"
+                  },
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "example": "string"
+                      }
                     }
                   }
                 }
