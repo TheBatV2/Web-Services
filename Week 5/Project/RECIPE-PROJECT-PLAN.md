@@ -165,4 +165,3 @@ NODE_ENV=production
 
 ---
 
-**When you start in the new window, just mention "Recipe Management API project" and reference this plan!**
