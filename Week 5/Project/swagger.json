@@ -15,12 +15,6 @@
       "description": "Development server"
     }
   ],
-  "tags": [
-    {
-      "name": "Recipes",
-      "description": "Recipe management endpoints"
-    }
-  ],
   "paths": {
     "/": {
       "get": {
@@ -136,7 +130,6 @@
     },
     "/api/recipes/{id}": {
       "get": {
-        "tags": ["Recipes"],
         "summary": "Get a recipe by ID",
         "description": "Retrieve a specific recipe by its ID",
         "parameters": [
@@ -166,7 +159,6 @@
         }
       },
       "put": {
-        "tags": ["Recipes"],
         "summary": "Update a recipe",
         "description": "Update an existing recipe by ID",
         "parameters": [
@@ -357,7 +349,6 @@
         }
       },
       "delete": {
-        "tags": ["Recipes"],
         "summary": "Delete a recipe",
         "description": "Delete a recipe by its ID",
         "parameters": [
