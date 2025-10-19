@@ -7,12 +7,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000",
-      "description": "Development server"
+      "url": "https://recipe-project-f7mh.onrender.com",
+      "description": "Production server"
     },
     {
-      "url": "https://your-app-name.onrender.com",
-      "description": "Production server"
+      "url": "http://localhost:3000",
+      "description": "Development server"
     }
   ],
   "tags": [
