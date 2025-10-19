@@ -73,7 +73,6 @@
       },
       "post": {
         "description": "Create a new recipe",
-        "tags": ["Recipes"],
         "requestBody": {
           "required": true,
           "content": {
