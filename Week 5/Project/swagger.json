@@ -136,13 +136,18 @@
     },
     "/api/recipes/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Recipes"],
+        "summary": "Get a recipe by ID",
+        "description": "Retrieve a specific recipe by its ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            },
+            "description": "Recipe ID"
           }
         ],
         "responses": {
@@ -161,24 +166,190 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": ["Recipes"],
+        "summary": "Update a recipe",
+        "description": "Update an existing recipe by ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            },
+            "description": "Recipe ID"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Updated Tropical Paradise Smoothie"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Extra refreshing smoothie with mango, pineapple, and coconut"
+                  },
+                  "ingredients": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "1 cup frozen mango chunks",
+                      "1/2 cup frozen pineapple chunks",
+                      "1 banana",
+                      "1/2 cup coconut milk",
+                      "1/4 cup orange juice",
+                      "2 tablespoons honey",
+                      "1/2 cup ice cubes",
+                      "Toasted coconut flakes for garnish"
+                    ]
+                  },
+                  "instructions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "Add mango, pineapple, and banana to blender",
+                      "Pour in coconut milk and orange juice",
+                      "Add honey for extra sweetness",
+                      "Add ice cubes",
+                      "Blend on high speed for 60 seconds until smooth",
+                      "Taste and adjust sweetness if needed",
+                      "Pour into glasses",
+                      "Garnish with toasted coconut flakes",
+                      "Serve immediately with a straw"
+                    ]
+                  },
+                  "cookTime": {
+                    "type": "number",
+                    "example": 5
+                  },
+                  "difficulty": {
+                    "type": "string",
+                    "enum": ["Easy", "Medium", "Hard"],
+                    "example": "Easy"
+                  },
+                  "category": {
+                    "type": "string",
+                    "enum": ["Appetizer", "Main Course", "Dessert", "Beverage", "Snack", "Breakfast"],
+                    "example": "Beverage"
+                  },
+                  "nutrition": {
+                    "type": "object",
+                    "properties": {
+                      "calories": {
+                        "type": "number",
+                        "example": 175
+                      },
+                      "protein": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "carbs": {
+                        "type": "number",
+                        "example": 38
+                      },
+                      "fat": {
+                        "type": "number",
+                        "example": 4
+                      }
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": ["smoothie", "tropical", "healthy", "vegan", "no-cook", "refreshing"]
+                  },
+                  "servings": {
+                    "type": "number",
+                    "example": 2
+                  },
+                  "isPublic": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                },
+                "required": ["title", "description", "ingredients", "instructions", "cookTime", "difficulty", "category", "servings"]
+              },
+              "example": {
+                "title": "Updated Tropical Paradise Smoothie",
+                "description": "Extra refreshing smoothie with mango, pineapple, and coconut",
+                "ingredients": [
+                  "1 cup frozen mango chunks",
+                  "1/2 cup frozen pineapple chunks",
+                  "1 banana",
+                  "1/2 cup coconut milk",
+                  "1/4 cup orange juice",
+                  "2 tablespoons honey",
+                  "1/2 cup ice cubes",
+                  "Toasted coconut flakes for garnish"
+                ],
+                "instructions": [
+                  "Add mango, pineapple, and banana to blender",
+                  "Pour in coconut milk and orange juice",
+                  "Add honey for extra sweetness",
+                  "Add ice cubes",
+                  "Blend on high speed for 60 seconds until smooth",
+                  "Taste and adjust sweetness if needed",
+                  "Pour into glasses",
+                  "Garnish with toasted coconut flakes",
+                  "Serve immediately with a straw"
+                ],
+                "cookTime": 5,
+                "difficulty": "Easy",
+                "category": "Beverage",
+                "nutrition": {
+                  "calories": 175,
+                  "protein": 2,
+                  "carbs": 38,
+                  "fat": 4
+                },
+                "tags": ["smoothie", "tropical", "healthy", "vegan", "no-cook", "refreshing"],
+                "servings": 2,
+                "isPublic": true
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Recipe updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Recipe updated successfully"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request - Validation failed"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Recipe not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -186,13 +357,18 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Recipes"],
+        "summary": "Delete a recipe",
+        "description": "Delete a recipe by its ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            },
+            "description": "Recipe ID"
           }
         ],
         "responses": {
