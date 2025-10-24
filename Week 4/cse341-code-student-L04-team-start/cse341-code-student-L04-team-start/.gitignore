@@ -1,1 +1,7 @@
 node_modules
+.env
+Extras/
+*.mp4
+*.mov
+*.avi
+*.mkv
