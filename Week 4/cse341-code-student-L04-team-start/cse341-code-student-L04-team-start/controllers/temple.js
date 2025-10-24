@@ -1,10 +1,8 @@
 const db = require('../models');
 const Temple = db.temples;
+const { AppError, catchAsync } = require('../middleware/errorHandler');
 
-const apiKey =
-  'Ezl0961tEpx2UxTZ5v2uKFK91qdNAr5npRlMT1zLcE3Mg68Xwaj3N8Dyp1R8IvFenrVwHRllOUxF0Og00l0m9NcaYMtH6Bpgdv7N';
-
-exports.create = (req, res) => {
+exports.create = catchAsync(async (req, res, next) => {
   // #swagger.summary = 'Create a new temple'
   // #swagger.description = 'Create a new temple entry in the database'
   /* #swagger.parameters['body'] = {
@@ -13,12 +11,16 @@ exports.create = (req, res) => {
     required: true,
     schema: { $ref: '#/definitions/TempleInput' }
   } */
-  /* #swagger.responses[200] = {
+  /* #swagger.responses[201] = {
     description: 'Temple created successfully',
     schema: { $ref: '#/definitions/Temple' }
   } */
   /* #swagger.responses[400] = {
-    description: 'Bad request - missing required fields',
+    description: 'Bad request - validation failed',
+    schema: { $ref: '#/definitions/Error' }
+  } */
+  /* #swagger.responses[409] = {
+    description: 'Conflict - temple already exists',
     schema: { $ref: '#/definitions/Error' }
   } */
   /* #swagger.responses[500] = {
@@ -26,34 +28,59 @@ exports.create = (req, res) => {
     schema: { $ref: '#/definitions/Error' }
   } */
   
-  // Validate request
-  if (!req.body.name) {
-    res.status(400).send({ message: 'Content can not be empty!' });
-    return;
-  }
+  try {
+    // Check if temple with same temple_id already exists
+    const existingTemple = await Temple.findOne({ temple_id: req.body.temple_id });
+    if (existingTemple) {
+      return next(new AppError(`Temple with ID ${req.body.temple_id} already exists`, 409));
+    }
 
-  // Create a Temple
-  const temple = new Temple({
-    temple_id: req.body.temple_id,
-    name: req.body.name,
-    description: req.body.description,
-    location: req.body.location,
-  });
-  // Save Temple in the database
-  temple
-    .save(temple)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || 'Some error occurred while creating the Temple.',
-      });
+    // Check if temple with same name already exists (case insensitive)
+    const existingName = await Temple.findOne({ 
+      name: { $regex: new RegExp(`^${req.body.name}$`, 'i') } 
     });
-};
+    if (existingName) {
+      return next(new AppError(`Temple with name '${req.body.name}' already exists`, 409));
+    }
 
-exports.findAll = (req, res) => {
+    // Create new temple
+    const temple = new Temple({
+      temple_id: req.body.temple_id,
+      name: req.body.name,
+      location: req.body.location,
+      dedicated: req.body.dedicated,
+      additionalInfo: req.body.additionalInfo || false
+    });
+
+    const savedTemple = await temple.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Temple created successfully',
+      data: savedTemple
+    });
+  } catch (error) {
+    // Handle Mongoose validation errors
+    if (error.name === 'ValidationError') {
+      const errors = Object.values(error.errors).map(err => ({
+        field: err.path,
+        message: err.message
+      }));
+      return next(new AppError(`Validation failed: ${errors.map(e => e.message).join(', ')}`, 400));
+    }
+    
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      const value = error.keyValue[field];
+      return next(new AppError(`${field} '${value}' already exists`, 409));
+    }
+
+    return next(error);
+  }
+});
+
+exports.findAll = catchAsync(async (req, res, next) => {
   // #swagger.summary = 'Get all temples'
   // #swagger.description = 'Retrieve all temples from the database. Requires API key in header.'
   // #swagger.security = [{ "apiKeyAuth": [] }]
@@ -66,8 +93,12 @@ exports.findAll = (req, res) => {
   /* #swagger.responses[200] = {
     description: 'List of all temples',
     schema: { 
-      type: 'array',
-      items: { $ref: '#/definitions/Temple' }
+      success: true,
+      count: 'number',
+      data: {
+        type: 'array',
+        items: { $ref: '#/definitions/Temple' }
+      }
     }
   } */
   /* #swagger.responses[401] = {
@@ -79,9 +110,9 @@ exports.findAll = (req, res) => {
     schema: { $ref: '#/definitions/Error' }
   } */
   
-  console.log(req.header('apiKey'));
-  if (req.header('apiKey') === apiKey) {
-    Temple.find(
+  try {
+    // API key validation is now handled by middleware
+    const temples = await Temple.find(
       {},
       {
         temple_id: 1,
@@ -90,24 +121,23 @@ exports.findAll = (req, res) => {
         dedicated: 1,
         additionalInfo: 1,
         _id: 0,
+        createdAt: 1,
+        updatedAt: 1
       }
-    )
-      .then((data) => {
-        res.send(data);
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message:
-            err.message || 'Some error occurred while retrieving temples.',
-        });
-      });
-  } else {
-    res.send('Invalid apiKey, please read the documentation.');
+    ).sort({ temple_id: 1 }); // Sort by temple_id for consistent ordering
+
+    res.status(200).json({
+      success: true,
+      count: temples.length,
+      data: temples
+    });
+  } catch (error) {
+    return next(new AppError('Error retrieving temples from database', 500));
   }
-};
+});
 
 // Find a single Temple with an id
-exports.findOne = (req, res) => {
+exports.findOne = catchAsync(async (req, res, next) => {
   // #swagger.summary = 'Get temple by ID'
   // #swagger.description = 'Retrieve a specific temple by its temple_id. Requires API key in header.'
   // #swagger.security = [{ "apiKeyAuth": [] }]
@@ -125,7 +155,10 @@ exports.findOne = (req, res) => {
   } */
   /* #swagger.responses[200] = {
     description: 'Temple found',
-    schema: { $ref: '#/definitions/Temple' }
+    schema: { 
+      success: true,
+      data: { $ref: '#/definitions/Temple' }
+    }
   } */
   /* #swagger.responses[404] = {
     description: 'Temple not found',
@@ -140,28 +173,43 @@ exports.findOne = (req, res) => {
     schema: { $ref: '#/definitions/Error' }
   } */
   
-  const temple_id = req.params.temple_id;
-  if (req.header('apiKey') === apiKey) {
-    Temple.find({ temple_id: temple_id })
-      .then((data) => {
-        if (!data)
-          res
-            .status(404)
-            .send({ message: 'Not found Temple with id ' + temple_id });
-        else res.send(data[0]);
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: 'Error retrieving Temple with temple_id=' + temple_id,
-        });
-      });
-  } else {
-    res.send('Invalid apiKey, please read the documentation.');
+  try {
+    const temple_id = parseInt(req.params.temple_id);
+    
+    // Validation is now handled by middleware, but double-check
+    if (!temple_id || temple_id <= 0) {
+      return next(new AppError('Invalid temple ID format', 400));
+    }
+
+    const temple = await Temple.findOne(
+      { temple_id: temple_id },
+      {
+        temple_id: 1,
+        name: 1,
+        location: 1,
+        dedicated: 1,
+        additionalInfo: 1,
+        _id: 0,
+        createdAt: 1,
+        updatedAt: 1
+      }
+    );
+
+    if (!temple) {
+      return next(new AppError(`Temple with ID ${temple_id} not found`, 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      data: temple
+    });
+  } catch (error) {
+    return next(new AppError(`Error retrieving temple with ID ${req.params.temple_id}`, 500));
   }
-};
+});
 
 // Update a Temple by the temple_id in the request
-exports.update = (req, res) => {
+exports.update = catchAsync(async (req, res, next) => {
   // #swagger.summary = 'Update temple by ID'
   // #swagger.description = 'Update a temple by its temple_id'
   /* #swagger.parameters['temple_id'] = {
@@ -178,14 +226,22 @@ exports.update = (req, res) => {
   } */
   /* #swagger.responses[200] = {
     description: 'Temple updated successfully',
-    schema: { message: 'Temple was updated successfully.' }
+    schema: { 
+      success: true,
+      message: 'Temple was updated successfully.',
+      data: { $ref: '#/definitions/Temple' }
+    }
   } */
   /* #swagger.responses[400] = {
-    description: 'Bad request - no data provided',
+    description: 'Bad request - validation failed',
     schema: { $ref: '#/definitions/Error' }
   } */
   /* #swagger.responses[404] = {
     description: 'Temple not found',
+    schema: { $ref: '#/definitions/Error' }
+  } */
+  /* #swagger.responses[409] = {
+    description: 'Conflict - duplicate data',
     schema: { $ref: '#/definitions/Error' }
   } */
   /* #swagger.responses[500] = {
@@ -193,30 +249,87 @@ exports.update = (req, res) => {
     schema: { $ref: '#/definitions/Error' }
   } */
 
-  if (!req.body) {
-    return res.status(400).send({
-      message: 'Data to update can not be empty!',
-    });
-  }
+  try {
+    const temple_id = parseInt(req.params.temple_id);
+    
+    // Check if there's any data to update
+    const updateData = Object.keys(req.body);
+    if (updateData.length === 0) {
+      return next(new AppError('No data provided for update', 400));
+    }
 
-  const temple_id = req.params.temple_id;
+    // Check if temple exists first
+    const existingTemple = await Temple.findOne({ temple_id: temple_id });
+    if (!existingTemple) {
+      return next(new AppError(`Temple with ID ${temple_id} not found`, 404));
+    }
 
-  Temple.findOneAndUpdate({ temple_id: temple_id }, req.body, { new: true })
-    .then((data) => {
-      if (!data) {
-        res.status(404).send({
-          message: `Cannot update Temple with temple_id=${temple_id}. Maybe Temple was not found!`,
-        });
-      } else res.send({ message: 'Temple was updated successfully.' });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: 'Error updating Temple with temple_id=' + temple_id,
+    // If updating temple_id, check for duplicates
+    if (req.body.temple_id && req.body.temple_id !== temple_id) {
+      const duplicateId = await Temple.findOne({ temple_id: req.body.temple_id });
+      if (duplicateId) {
+        return next(new AppError(`Temple with ID ${req.body.temple_id} already exists`, 409));
+      }
+    }
+
+    // If updating name, check for duplicates (case insensitive)
+    if (req.body.name && req.body.name.toLowerCase() !== existingTemple.name.toLowerCase()) {
+      const duplicateName = await Temple.findOne({ 
+        name: { $regex: new RegExp(`^${req.body.name}$`, 'i') },
+        temple_id: { $ne: temple_id }
       });
+      if (duplicateName) {
+        return next(new AppError(`Temple with name '${req.body.name}' already exists`, 409));
+      }
+    }
+
+    // Perform the update
+    const updatedTemple = await Temple.findOneAndUpdate(
+      { temple_id: temple_id }, 
+      req.body, 
+      { 
+        new: true, 
+        runValidators: true,
+        projection: {
+          temple_id: 1,
+          name: 1,
+          location: 1,
+          dedicated: 1,
+          additionalInfo: 1,
+          _id: 0,
+          createdAt: 1,
+          updatedAt: 1
+        }
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Temple was updated successfully.',
+      data: updatedTemple
     });
-};
+  } catch (error) {
+    // Handle Mongoose validation errors
+    if (error.name === 'ValidationError') {
+      const errors = Object.values(error.errors).map(err => ({
+        field: err.path,
+        message: err.message
+      }));
+      return next(new AppError(`Validation failed: ${errors.map(e => e.message).join(', ')}`, 400));
+    }
+    
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      const value = error.keyValue[field];
+      return next(new AppError(`${field} '${value}' already exists`, 409));
+    }
+
+    return next(new AppError(`Error updating temple with ID ${req.params.temple_id}`, 500));
+  }
+});
 // Delete a Temple with the specified temple_id in the request
-exports.delete = (req, res) => {
+exports.delete = catchAsync(async (req, res, next) => {
   // #swagger.summary = 'Delete temple by ID'
   // #swagger.description = 'Delete a temple by its temple_id'
   /* #swagger.parameters['temple_id'] = {
@@ -227,7 +340,11 @@ exports.delete = (req, res) => {
   } */
   /* #swagger.responses[200] = {
     description: 'Temple deleted successfully',
-    schema: { message: 'Temple was deleted successfully!' }
+    schema: { 
+      success: true,
+      message: 'Temple was deleted successfully!',
+      data: { $ref: '#/definitions/Temple' }
+    }
   } */
   /* #swagger.responses[404] = {
     description: 'Temple not found',
@@ -238,53 +355,91 @@ exports.delete = (req, res) => {
     schema: { $ref: '#/definitions/Error' }
   } */
 
-  const temple_id = req.params.temple_id;
+  try {
+    const temple_id = parseInt(req.params.temple_id);
+    
+    // Validation is handled by middleware, but double-check
+    if (!temple_id || temple_id <= 0) {
+      return next(new AppError('Invalid temple ID format', 400));
+    }
 
-  Temple.findOneAndDelete({ temple_id: temple_id })
-    .then((data) => {
-      if (!data) {
-        res.status(404).send({
-          message: `Cannot delete Temple with temple_id=${temple_id}. Maybe Temple was not found!`,
-        });
-      } else {
-        res.send({
-          message: 'Temple was deleted successfully!',
-        });
+    const deletedTemple = await Temple.findOneAndDelete(
+      { temple_id: temple_id },
+      {
+        projection: {
+          temple_id: 1,
+          name: 1,
+          location: 1,
+          dedicated: 1,
+          additionalInfo: 1,
+          _id: 0
+        }
       }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: 'Could not delete Temple with temple_id=' + temple_id,
-      });
+    );
+
+    if (!deletedTemple) {
+      return next(new AppError(`Temple with ID ${temple_id} not found`, 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Temple was deleted successfully!',
+      data: deletedTemple
     });
-};
+  } catch (error) {
+    return next(new AppError(`Error deleting temple with ID ${req.params.temple_id}`, 500));
+  }
+});
 
 // Delete all Temples from the database.
-exports.deleteAll = (req, res) => {
+exports.deleteAll = catchAsync(async (req, res, next) => {
   // #swagger.summary = 'Delete all temples'
-  // #swagger.description = 'Delete all temples from the database'
+  // #swagger.description = 'Delete all temples from the database. DANGEROUS OPERATION!'
   /* #swagger.responses[200] = {
     description: 'All temples deleted successfully',
-    schema: { message: 'X Temples were deleted successfully!' }
+    schema: { 
+      success: true,
+      message: 'X Temples were deleted successfully!',
+      deletedCount: 'number'
+    }
   } */
   /* #swagger.responses[500] = {
     description: 'Internal server error',
     schema: { $ref: '#/definitions/Error' }
   } */
 
-  Temple.deleteMany({})
-    .then((data) => {
-      res.send({
-        message: `${data.deletedCount} Temples were deleted successfully!`,
+  try {
+    // Add extra confirmation for this dangerous operation
+    const confirmationHeader = req.header('confirm-delete-all');
+    if (confirmationHeader !== 'YES_DELETE_ALL_TEMPLES') {
+      return next(new AppError(
+        'This is a destructive operation. Add header "confirm-delete-all: YES_DELETE_ALL_TEMPLES" to confirm.',
+        400
+      ));
+    }
+
+    // Count temples before deletion for confirmation
+    const countBeforeDeletion = await Temple.countDocuments();
+    
+    if (countBeforeDeletion === 0) {
+      return res.status(200).json({
+        success: true,
+        message: 'No temples found to delete',
+        deletedCount: 0
       });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || 'Some error occurred while removing all temples.',
-      });
+    }
+
+    const result = await Temple.deleteMany({});
+
+    res.status(200).json({
+      success: true,
+      message: `${result.deletedCount} temples were deleted successfully!`,
+      deletedCount: result.deletedCount
     });
-};
+  } catch (error) {
+    return next(new AppError('Error occurred while deleting all temples', 500));
+  }
+});
 
 // // Find all published Temples
 // exports.findAllPublished = (req, res) => {
