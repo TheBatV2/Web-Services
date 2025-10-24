@@ -165,11 +165,8 @@ const updateRecipe = async (req, res) => {
       });
     }
 
-    res.status(200).json({
-      success: true,
-      message: 'Recipe updated successfully',
-      data: recipe
-    });
+    // Return 204 No Content for successful update (mastery level requirement)
+    res.status(204).send();
   } catch (error) {
     console.error('Error updating recipe:', error);
 

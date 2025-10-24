@@ -314,28 +314,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Recipe updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Recipe updated successfully"
-                    },
-                    "data": {
-                      "type": "object"
-                    }
-                  }
-                }
-              }
-            }
+          "204": {
+            "description": "Recipe updated successfully - No Content"
           },
           "400": {
             "description": "Bad Request - Validation failed"
