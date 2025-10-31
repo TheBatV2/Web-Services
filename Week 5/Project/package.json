@@ -8,20 +8,26 @@
     "dev": "nodemon server.js",
     "swagger": "node swagger.js"
   },
-  "keywords": ["recipe", "api", "mongodb", "oauth", "express"],
+  "keywords": [
+    "recipe",
+    "api",
+    "mongodb",
+    "oauth",
+    "express"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-session": "^1.18.2",
+    "joi": "^17.9.2",
     "mongoose": "^7.5.0",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
-    "express-session": "^1.17.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "swagger-ui-express": "^5.0.0",
     "swagger-autogen": "^2.23.7",
-    "joi": "^17.9.2"
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

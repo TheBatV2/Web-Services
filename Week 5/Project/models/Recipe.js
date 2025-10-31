@@ -59,7 +59,7 @@ const recipeSchema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false // Will be required when OAuth is implemented
+    required: [true, 'Author is required']
   },
   nutrition: {
     calories: {

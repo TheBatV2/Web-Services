@@ -255,3 +255,268 @@
 5. Show the clean API documentation
 
 **Perfect for showcasing your Recipe Management API! 🚀**
+
+---
+
+## 🍰 Recipe 6: Chocolate Lava Cake (Hard Dessert)
+
+```json
+{
+  "title": "Decadent Chocolate Lava Cake",
+  "description": "Rich chocolate cake with molten chocolate center, perfect for special occasions",
+  "ingredients": [
+    "6 oz dark chocolate, chopped",
+    "6 tablespoons unsalted butter",
+    "2 large eggs",
+    "2 large egg yolks",
+    "1/4 cup granulated sugar",
+    "Pinch of salt",
+    "2 tablespoons all-purpose flour",
+    "Butter for ramekins",
+    "Cocoa powder for dusting",
+    "Vanilla ice cream for serving",
+    "Fresh berries for garnish"
+  ],
+  "instructions": [
+    "Preheat oven to 425°F (220°C)",
+    "Butter four 6-oz ramekins and dust with cocoa powder",
+    "Melt chocolate and butter in double boiler until smooth",
+    "In separate bowl, whisk eggs, egg yolks, and sugar until thick and pale",
+    "Stir melted chocolate mixture into egg mixture",
+    "Add salt and flour, mix until just combined",
+    "Divide batter among prepared ramekins",
+    "Bake for 12-14 minutes until edges are set but centers jiggle",
+    "Let cool for 1 minute, then run knife around edges",
+    "Invert onto serving plates and let sit 10 seconds before lifting ramekins",
+    "Serve immediately with ice cream and berries"
+  ],
+  "cookTime": 45,
+  "difficulty": "Hard",
+  "category": "Dessert",
+  "nutrition": {
+    "calories": 420,
+    "protein": 8,
+    "carbs": 35,
+    "fat": 28
+  },
+  "tags": ["chocolate", "dessert", "fancy", "date-night", "molten"],
+  "servings": 4,
+  "isPublic": true
+}
+```
+
+## 🥪 Recipe 7: Grilled Chicken Club Sandwich (Medium Snack)
+
+```json
+{
+  "title": "Ultimate Grilled Chicken Club",
+  "description": "Triple-decker sandwich with grilled chicken, bacon, lettuce, tomato, and avocado",
+  "ingredients": [
+    "3 slices sourdough bread, toasted",
+    "1 grilled chicken breast, sliced",
+    "4 strips bacon, crispy",
+    "2 leaves butter lettuce",
+    "3 slices ripe tomato",
+    "1/2 avocado, sliced",
+    "2 tablespoons mayonnaise",
+    "1 tablespoon Dijon mustard",
+    "Salt and pepper to taste",
+    "Toothpicks for assembly"
+  ],
+  "instructions": [
+    "Toast bread slices until golden brown",
+    "Season chicken breast with salt and pepper, grill until cooked through",
+    "Cook bacon until crispy and drain on paper towels",
+    "Slice tomato and avocado",
+    "Mix mayonnaise and Dijon mustard for spread",
+    "Spread mayo mixture on one side of each toast slice",
+    "Layer first slice with lettuce and tomato",
+    "Add second slice of bread, then chicken and bacon",
+    "Top with avocado and third slice of bread",
+    "Secure layers with toothpicks in quarters",
+    "Cut diagonally and serve immediately"
+  ],
+  "cookTime": 20,
+  "difficulty": "Medium",
+  "category": "Snack",
+  "nutrition": {
+    "calories": 650,
+    "protein": 45,
+    "carbs": 35,
+    "fat": 35
+  },
+  "tags": ["sandwich", "chicken", "bacon", "lunch", "protein"],
+  "servings": 1,
+  "isPublic": true
+}
+```
+
+## 🥣 Recipe 8: Creamy Mushroom Risotto (Hard Main Course)
+
+```json
+{
+  "title": "Classic Mushroom Risotto",
+  "description": "Creamy Italian rice dish with mixed mushrooms and Parmesan cheese",
+  "ingredients": [
+    "1.5 cups Arborio rice",
+    "6 cups warm chicken stock",
+    "1 lb mixed mushrooms, sliced",
+    "1 medium onion, finely diced",
+    "3 cloves garlic, minced",
+    "1/2 cup dry white wine",
+    "4 tablespoons butter",
+    "3 tablespoons olive oil",
+    "1 cup freshly grated Parmesan cheese",
+    "2 tablespoons fresh parsley, chopped",
+    "Salt and white pepper to taste"
+  ],
+  "instructions": [
+    "Heat olive oil in large heavy-bottomed pan",
+    "Sauté mushrooms until golden, season and set aside",
+    "In same pan, melt 2 tablespoons butter",
+    "Add onion and cook until translucent",
+    "Add garlic and rice, stir for 2 minutes until rice is coated",
+    "Pour in wine and stir until absorbed",
+    "Add warm stock one ladle at a time, stirring constantly",
+    "Continue adding stock and stirring for 18-20 minutes",
+    "Rice should be creamy but still have slight bite",
+    "Stir in mushrooms, remaining butter, and Parmesan",
+    "Season with salt and pepper",
+    "Garnish with parsley and serve immediately"
+  ],
+  "cookTime": 35,
+  "difficulty": "Hard",
+  "category": "Main Course",
+  "nutrition": {
+    "calories": 380,
+    "protein": 12,
+    "carbs": 55,
+    "fat": 14
+  },
+  "tags": ["risotto", "mushrooms", "italian", "creamy", "vegetarian"],
+  "servings": 6,
+  "isPublic": true
+}
+```
+
+## 🧇 Recipe 9: Belgian Waffles (Easy Breakfast)
+
+```json
+{
+  "title": "Fluffy Belgian Waffles",
+  "description": "Light and airy waffles perfect for weekend breakfast with syrup and fresh fruit",
+  "ingredients": [
+    "2 cups all-purpose flour",
+    "2 tablespoons sugar",
+    "2 teaspoons baking powder",
+    "1/2 teaspoon salt",
+    "2 large eggs, separated",
+    "1.75 cups milk",
+    "1/2 cup melted butter",
+    "1 teaspoon vanilla extract",
+    "Cooking spray for waffle iron",
+    "Maple syrup for serving",
+    "Fresh strawberries for garnish",
+    "Powdered sugar for dusting"
+  ],
+  "instructions": [
+    "Preheat waffle iron according to manufacturer instructions",
+    "In large bowl, whisk together flour, sugar, baking powder, and salt",
+    "In separate bowl, whisk egg yolks with milk, melted butter, and vanilla",
+    "Pour wet ingredients into dry ingredients and stir until just combined",
+    "In clean bowl, beat egg whites until stiff peaks form",
+    "Gently fold egg whites into batter in thirds",
+    "Spray waffle iron with cooking spray",
+    "Pour batter onto waffle iron and cook until golden brown",
+    "Serve immediately with maple syrup and fresh strawberries",
+    "Dust with powdered sugar before serving"
+  ],
+  "cookTime": 15,
+  "difficulty": "Easy",
+  "category": "Breakfast",
+  "nutrition": {
+    "calories": 320,
+    "protein": 9,
+    "carbs": 42,
+    "fat": 13
+  },
+  "tags": ["waffles", "breakfast", "fluffy", "weekend", "syrup"],
+  "servings": 8,
+  "isPublic": true
+}
+```
+
+## 🌮 Recipe 10: Fish Tacos (Medium Main Course)
+
+```json
+{
+  "title": "Baja-Style Fish Tacos",
+  "description": "Fresh white fish with crunchy cabbage slaw and creamy lime sauce in soft tortillas",
+  "ingredients": [
+    "1.5 lbs white fish fillets (mahi-mahi or cod)",
+    "8 small flour tortillas",
+    "2 cups green cabbage, thinly sliced",
+    "1/4 cup red onion, finely diced",
+    "1/4 cup fresh cilantro, chopped",
+    "1/2 cup mayonnaise",
+    "2 tablespoons lime juice",
+    "1 tablespoon chili powder",
+    "1 teaspoon cumin",
+    "1/2 teaspoon paprika",
+    "Salt and pepper to taste",
+    "2 tablespoons olive oil",
+    "Lime wedges for serving",
+    "Hot sauce (optional)"
+  ],
+  "instructions": [
+    "Mix chili powder, cumin, paprika, salt, and pepper for spice rub",
+    "Rub spice mixture all over fish fillets",
+    "Heat olive oil in large skillet over medium-high heat",
+    "Cook fish for 3-4 minutes per side until flaky and cooked through",
+    "Let fish rest, then flake into bite-sized pieces",
+    "In bowl, combine cabbage, red onion, and cilantro for slaw",
+    "Mix mayonnaise with lime juice for sauce",
+    "Warm tortillas in dry skillet or microwave",
+    "Fill each tortilla with fish, top with slaw",
+    "Drizzle with lime sauce",
+    "Serve with lime wedges and hot sauce"
+  ],
+  "cookTime": 25,
+  "difficulty": "Medium",
+  "category": "Main Course",
+  "nutrition": {
+    "calories": 290,
+    "protein": 25,
+    "carbs": 28,
+    "fat": 12
+  },
+  "tags": ["fish", "tacos", "mexican", "fresh", "lime", "healthy"],
+  "servings": 4,
+  "isPublic": true
+}
+```
+
+## 🎯 Updated Testing Guide
+
+### New Recipe Categories Added:
+- **Hard Dessert**: Chocolate Lava Cake (complex technique)
+- **Medium Snack**: Grilled Chicken Club (multi-layer assembly)
+- **Hard Main Course**: Mushroom Risotto (requires technique and timing)
+- **Easy Breakfast**: Belgian Waffles (simple but impressive)
+- **Medium Main Course**: Fish Tacos (multiple components)
+
+### Now You Have Complete Coverage:
+- **Difficulties**: Easy (4), Medium (4), Hard (2) 
+- **Categories**: Appetizer (1), Main Course (4), Dessert (1), Beverage (1), Snack (1), Breakfast (2)
+- **Cook Times**: 5-45 minutes (variety for testing)
+- **Servings**: 1-12 (range testing)
+
+### Perfect for Video Demonstration:
+1. **Create** a simple recipe (Belgian Waffles)
+2. **Update** to add more ingredients (Fish Tacos → extra toppings)
+3. **Delete** a test recipe
+4. **Show filtering** by difficulty (Easy vs Hard)
+5. **Show validation errors** with invalid data
+6. **Show error handling** with invalid IDs
+
+**You now have 10 diverse recipes ready for comprehensive API testing! 🚀**

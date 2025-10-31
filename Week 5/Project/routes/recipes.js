@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { requireAuth, optionalAuth } = require('../middleware/auth');
 const {
   getRecipes,
   getRecipeById,
@@ -11,20 +12,21 @@ const {
 // @route   GET /api/recipes
 // @desc    Get all recipes (with optional filters)
 // @access  Public
-router.get('/', getRecipes);
+router.get('/', optionalAuth, getRecipes);
 
 // @route   GET /api/recipes/:id
 // @desc    Get recipe by ID
 // @access  Public
-router.get('/:id', getRecipeById);
+router.get('/:id', optionalAuth, getRecipeById);
 
 // @route   POST /api/recipes
 // @desc    Create new recipe
-// @access  Public (will be protected later)
+// @access  Private (requires authentication)
 /*
   #swagger.tags = ['Recipes']
   #swagger.summary = 'Create a new recipe'
   #swagger.description = 'Add a new recipe to the database'
+  #swagger.security = [{ "cookieAuth": [] }]
   #swagger.requestBody = {
     required: true,
     content: {
@@ -59,15 +61,16 @@ router.get('/:id', getRecipeById);
     }
   }
 */
-router.post('/', createRecipe);
+router.post('/', requireAuth, createRecipe);
 
 // @route   PUT /api/recipes/:id
 // @desc    Update recipe
-// @access  Public (will be protected later)
+// @access  Private (requires authentication and ownership)
 /*
   #swagger.tags = ['Recipes']
   #swagger.summary = 'Update an existing recipe'
-  #swagger.description = 'Update a recipe by ID'
+  #swagger.description = 'Update a recipe by ID (requires ownership)'
+  #swagger.security = [{ "cookieAuth": [] }]
   #swagger.parameters['id'] = {
     in: 'path',
     description: 'Recipe ID',
@@ -100,11 +103,23 @@ router.post('/', createRecipe);
     }
   }
 */
-router.put('/:id', updateRecipe);
+router.put('/:id', requireAuth, updateRecipe);
 
 // @route   DELETE /api/recipes/:id
 // @desc    Delete recipe
-// @access  Public (will be protected later)
-router.delete('/:id', deleteRecipe);
+// @access  Private (requires authentication and ownership)
+/*
+  #swagger.tags = ['Recipes']
+  #swagger.summary = 'Delete a recipe'
+  #swagger.description = 'Delete a recipe by ID (requires ownership)'
+  #swagger.security = [{ "cookieAuth": [] }]
+  #swagger.parameters['id'] = {
+    in: 'path',
+    description: 'Recipe ID',
+    required: true,
+    type: 'string'
+  }
+*/
+router.delete('/:id', requireAuth, deleteRecipe);
 
 module.exports = router;

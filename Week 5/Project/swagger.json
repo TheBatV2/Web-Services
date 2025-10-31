@@ -1,19 +1,38 @@
 {
-  "openapi": "3.0.0",
+  "swagger": "2.0",
   "info": {
     "title": "Recipe Management API",
-    "description": "API for managing recipes with full CRUD operations",
+    "description": "API for managing recipes with full CRUD operations and OAuth authentication",
     "version": "1.0.0"
   },
-  "servers": [
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
     {
-      "url": "https://recipe-project-f7mh.onrender.com",
-      "description": "Production server"
+      "name": "Authentication",
+      "description": "User authentication endpoints"
     },
     {
-      "url": "http://localhost:3000",
-      "description": "Development server"
+      "name": "Recipes",
+      "description": "Recipe management endpoints"
     }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "securityDefinitions": {
+    "cookieAuth": {
+      "type": "apiKey",
+      "in": "cookie",
+      "name": "connect.sid"
+    }
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
   ],
   "paths": {
     "/": {
@@ -32,6 +51,191 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/current-user": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get current authenticated user",
+        "description": "Returns the currently authenticated user",
+        "responses": {
+          "200": {
+            "description": "Current user retrieved successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "data": {
+                  "$ref": "#/definitions/User"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Not authenticated"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/google": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/auth/google/callback": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Google OAuth callback",
+        "description": "Handles the callback from Google OAuth and redirects user",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logout user",
+        "description": "Logs out the current user and destroys the session",
+        "responses": {
+          "200": {
+            "description": "User logged out successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Logged out successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/auth/profile": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get user profile",
+        "description": "Get detailed profile information for the authenticated user",
+        "responses": {
+          "200": {
+            "description": "Profile retrieved successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "data": {
+                  "$ref": "#/definitions/User"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "User not authenticated"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Update user profile",
+        "description": "Update the authenticated user\\'s profile information",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Profile update data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "bio": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "dietaryPreferences": {
+                  "type": "array",
+                  "example": [
+                    "string"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "cookingSkillLevel": {
+                  "type": "string",
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -66,61 +270,16 @@
         }
       },
       "post": {
-        "description": "Create a new recipe",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Recipe"
-              },
-              "example": {
-                "title": "Fresh Tomato Salsa",
-                "description": "A vibrant and fresh homemade salsa perfect for chips or tacos",
-                "ingredients": [
-                  "4 large ripe tomatoes, diced",
-                  "1 medium red onion, finely chopped",
-                  "2-3 jalapeño peppers, seeded and minced",
-                  "1/4 cup fresh cilantro, chopped",
-                  "2 cloves garlic, minced",
-                  "2 tablespoons lime juice",
-                  "1 teaspoon salt",
-                  "1/2 teaspoon ground cumin"
-                ],
-                "instructions": [
-                  "Dice tomatoes and place in a large bowl",
-                  "Add finely chopped red onion",
-                  "Remove seeds from jalapeños and mince finely",
-                  "Chop fresh cilantro and mince garlic",
-                  "Add jalapeños, cilantro, and garlic to tomatoes",
-                  "Squeeze fresh lime juice over mixture",
-                  "Add salt and cumin",
-                  "Mix all ingredients thoroughly",
-                  "Let sit for 30 minutes to allow flavors to meld",
-                  "Taste and adjust seasoning as needed"
-                ],
-                "cookTime": 15,
-                "difficulty": "Easy",
-                "category": "Appetizer",
-                "nutrition": {
-                  "calories": 25,
-                  "protein": 1,
-                  "carbs": 6,
-                  "fat": 0
-                },
-                "tags": ["vegan", "gluten-free", "healthy", "mexican", "appetizer"],
-                "servings": 8,
-                "isPublic": true
-              }
-            }
-          }
-        },
+        "description": "",
         "responses": {
           "201": {
-            "description": "Recipe created successfully"
+            "description": "Created"
           },
           "400": {
-            "description": "Bad Request - Validation failed"
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
             "description": "Internal Server Error"
@@ -130,17 +289,13 @@
     },
     "/api/recipes/{id}": {
       "get": {
-        "summary": "Get a recipe by ID",
-        "description": "Retrieve a specific recipe by its ID",
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Recipe ID"
+            "type": "string"
           }
         ],
         "responses": {
@@ -159,169 +314,30 @@
         }
       },
       "put": {
-        "summary": "Update a recipe",
-        "description": "Update an existing recipe by ID",
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Recipe ID"
+            "type": "string"
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "example": "Updated Tropical Paradise Smoothie"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Extra refreshing smoothie with mango, pineapple, and coconut"
-                  },
-                  "ingredients": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "1 cup frozen mango chunks",
-                      "1/2 cup frozen pineapple chunks",
-                      "1 banana",
-                      "1/2 cup coconut milk",
-                      "1/4 cup orange juice",
-                      "2 tablespoons honey",
-                      "1/2 cup ice cubes",
-                      "Toasted coconut flakes for garnish"
-                    ]
-                  },
-                  "instructions": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "Add mango, pineapple, and banana to blender",
-                      "Pour in coconut milk and orange juice",
-                      "Add honey for extra sweetness",
-                      "Add ice cubes",
-                      "Blend on high speed for 60 seconds until smooth",
-                      "Taste and adjust sweetness if needed",
-                      "Pour into glasses",
-                      "Garnish with toasted coconut flakes",
-                      "Serve immediately with a straw"
-                    ]
-                  },
-                  "cookTime": {
-                    "type": "number",
-                    "example": 5
-                  },
-                  "difficulty": {
-                    "type": "string",
-                    "enum": ["Easy", "Medium", "Hard"],
-                    "example": "Easy"
-                  },
-                  "category": {
-                    "type": "string",
-                    "enum": ["Appetizer", "Main Course", "Dessert", "Beverage", "Snack", "Breakfast"],
-                    "example": "Beverage"
-                  },
-                  "nutrition": {
-                    "type": "object",
-                    "properties": {
-                      "calories": {
-                        "type": "number",
-                        "example": 175
-                      },
-                      "protein": {
-                        "type": "number",
-                        "example": 2
-                      },
-                      "carbs": {
-                        "type": "number",
-                        "example": 38
-                      },
-                      "fat": {
-                        "type": "number",
-                        "example": 4
-                      }
-                    }
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": ["smoothie", "tropical", "healthy", "vegan", "no-cook", "refreshing"]
-                  },
-                  "servings": {
-                    "type": "number",
-                    "example": 2
-                  },
-                  "isPublic": {
-                    "type": "boolean",
-                    "example": true
-                  }
-                },
-                "required": ["title", "description", "ingredients", "instructions", "cookTime", "difficulty", "category", "servings"]
-              },
-              "example": {
-                "title": "Updated Tropical Paradise Smoothie",
-                "description": "Extra refreshing smoothie with mango, pineapple, and coconut",
-                "ingredients": [
-                  "1 cup frozen mango chunks",
-                  "1/2 cup frozen pineapple chunks",
-                  "1 banana",
-                  "1/2 cup coconut milk",
-                  "1/4 cup orange juice",
-                  "2 tablespoons honey",
-                  "1/2 cup ice cubes",
-                  "Toasted coconut flakes for garnish"
-                ],
-                "instructions": [
-                  "Add mango, pineapple, and banana to blender",
-                  "Pour in coconut milk and orange juice",
-                  "Add honey for extra sweetness",
-                  "Add ice cubes",
-                  "Blend on high speed for 60 seconds until smooth",
-                  "Taste and adjust sweetness if needed",
-                  "Pour into glasses",
-                  "Garnish with toasted coconut flakes",
-                  "Serve immediately with a straw"
-                ],
-                "cookTime": 5,
-                "difficulty": "Easy",
-                "category": "Beverage",
-                "nutrition": {
-                  "calories": 175,
-                  "protein": 2,
-                  "carbs": 38,
-                  "fat": 4
-                },
-                "tags": ["smoothie", "tropical", "healthy", "vegan", "no-cook", "refreshing"],
-                "servings": 2,
-                "isPublic": true
-              }
-            }
-          }
-        },
         "responses": {
           "204": {
-            "description": "Recipe updated successfully - No Content"
+            "description": "No Content"
           },
           "400": {
-            "description": "Bad Request - Validation failed"
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "404": {
-            "description": "Recipe not found"
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -329,17 +345,13 @@
         }
       },
       "delete": {
-        "summary": "Delete a recipe",
-        "description": "Delete a recipe by its ID",
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Recipe ID"
+            "type": "string"
           }
         ],
         "responses": {
@@ -348,6 +360,12 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "404": {
             "description": "Not Found"
@@ -359,357 +377,627 @@
       }
     }
   },
-  "components": {
-    "schemas": {
-      "Recipe": {
-        "type": "object",
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "example": "object"
+        },
         "properties": {
-          "type": {
-            "type": "string",
-            "example": "object"
-          },
-          "required": {
-            "type": "array",
-            "example": [
-              "title",
-              "description",
-              "ingredients",
-              "instructions",
-              "cookTime",
-              "difficulty",
-              "category",
-              "servings"
-            ],
-            "items": {
-              "type": "string"
-            }
-          },
+          "type": "object",
           "properties": {
-            "type": "object",
-            "properties": {
-              "title": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "string"
-                  },
-                  "example": {
-                    "type": "string",
-                    "example": "Chocolate Chip Cookies"
-                  }
+            "_id": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439011"
                 }
-              },
-              "description": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "string"
-                  },
-                  "example": {
-                    "type": "string",
-                    "example": "Delicious homemade chocolate chip cookies"
-                  }
+              }
+            },
+            "googleId": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "123456789012345678901"
                 }
-              },
-              "ingredients": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "array"
-                  },
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "example": "string"
-                      }
-                    }
-                  },
-                  "example": {
-                    "type": "array",
-                    "example": [
-                      "2 cups flour",
-                      "1 cup sugar",
-                      "1/2 cup chocolate chips"
-                    ],
-                    "items": {
-                      "type": "string"
-                    }
-                  }
+              }
+            },
+            "email": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "user@example.com"
                 }
-              },
-              "instructions": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "array"
-                  },
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "example": "string"
-                      }
-                    }
-                  },
-                  "example": {
-                    "type": "array",
-                    "example": [
-                      "Mix dry ingredients",
-                      "Add wet ingredients",
-                      "Bake for 12 minutes"
-                    ],
-                    "items": {
-                      "type": "string"
-                    }
-                  }
+              }
+            },
+            "name": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "John Doe"
                 }
-              },
-              "cookTime": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "number"
-                  },
-                  "example": {
-                    "type": "number",
-                    "example": 25
-                  }
+              }
+            },
+            "profilePicture": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "https://example.com/profile.jpg"
                 }
-              },
-              "difficulty": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "string"
-                  },
-                  "enum": {
-                    "type": "array",
-                    "example": [
-                      "Easy",
-                      "Medium",
-                      "Hard"
-                    ],
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "example": {
-                    "type": "string",
-                    "example": "Easy"
-                  }
+              }
+            },
+            "bio": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Food enthusiast and home cook"
                 }
-              },
-              "category": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "string"
-                  },
-                  "enum": {
-                    "type": "array",
-                    "example": [
-                      "Appetizer",
-                      "Main Course",
-                      "Dessert",
-                      "Beverage",
-                      "Snack",
-                      "Breakfast"
-                    ],
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "example": {
-                    "type": "string",
-                    "example": "Dessert"
-                  }
-                }
-              },
-              "nutrition": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "object"
-                  },
+              }
+            },
+            "favoriteRecipes": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "items": {
+                  "type": "object",
                   "properties": {
-                    "type": "object",
-                    "properties": {
-                      "calories": {
-                        "type": "object",
-                        "properties": {
-                          "type": {
-                            "type": "string",
-                            "example": "number"
-                          },
-                          "example": {
-                            "type": "number",
-                            "example": 250
-                          }
-                        }
-                      },
-                      "protein": {
-                        "type": "object",
-                        "properties": {
-                          "type": {
-                            "type": "string",
-                            "example": "number"
-                          },
-                          "example": {
-                            "type": "number",
-                            "example": 3
-                          }
-                        }
-                      },
-                      "carbs": {
-                        "type": "object",
-                        "properties": {
-                          "type": {
-                            "type": "string",
-                            "example": "number"
-                          },
-                          "example": {
-                            "type": "number",
-                            "example": 35
-                          }
-                        }
-                      },
-                      "fat": {
-                        "type": "object",
-                        "properties": {
-                          "type": {
-                            "type": "string",
-                            "example": "number"
-                          },
-                          "example": {
-                            "type": "number",
-                            "example": 12
-                          }
-                        }
-                      }
+                    "type": {
+                      "type": "string",
+                      "example": "string"
                     }
                   }
                 }
-              },
-              "tags": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "array"
-                  },
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "example": "string"
-                      }
-                    }
-                  },
-                  "example": {
-                    "type": "array",
-                    "example": [
-                      "vegetarian",
-                      "dessert",
-                      "baking"
-                    ],
-                    "items": {
-                      "type": "string"
+              }
+            },
+            "dietaryPreferences": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
                     }
                   }
                 }
-              },
-              "servings": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "number"
-                  },
-                  "example": {
-                    "type": "number",
-                    "example": 24
-                  }
+              }
+            },
+            "cookingSkillLevel": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Intermediate"
                 }
-              },
-              "isPublic": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "boolean"
-                  },
-                  "example": {
-                    "type": "boolean",
-                    "example": true
-                  }
+              }
+            },
+            "isActive": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "boolean"
+                },
+                "example": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            },
+            "createdAt": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "format": {
+                  "type": "string",
+                  "example": "date-time"
+                }
+              }
+            },
+            "updatedAt": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "format": {
+                  "type": "string",
+                  "example": "date-time"
                 }
               }
             }
           }
         }
-      },
-      "Error": {
-        "type": "object",
+      }
+    },
+    "Recipe": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "example": "object"
+        },
+        "required": {
+          "type": "array",
+          "example": [
+            "title",
+            "description",
+            "ingredients",
+            "instructions",
+            "cookTime",
+            "difficulty",
+            "category",
+            "servings"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
         "properties": {
-          "type": {
-            "type": "string",
-            "example": "object"
-          },
+          "type": "object",
           "properties": {
-            "type": "object",
-            "properties": {
-              "success": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "boolean"
-                  },
-                  "example": {
-                    "type": "boolean",
-                    "example": false
-                  }
+            "_id": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439012"
                 }
-              },
-              "error": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "string"
-                  },
-                  "example": {
-                    "type": "string",
-                    "example": "Error message"
-                  }
+              }
+            },
+            "title": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Chocolate Chip Cookies"
                 }
-              },
-              "details": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "example": "array"
-                  },
+              }
+            },
+            "description": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Delicious homemade chocolate chip cookies"
+                }
+              }
+            },
+            "ingredients": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "type": "array",
+                  "example": [
+                    "2 cups flour",
+                    "1 cup sugar",
+                    "1/2 cup chocolate chips"
+                  ],
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "example": "string"
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "instructions": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "type": "array",
+                  "example": [
+                    "Mix dry ingredients",
+                    "Add wet ingredients",
+                    "Bake for 12 minutes"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "cookTime": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "number"
+                },
+                "example": {
+                  "type": "number",
+                  "example": 25
+                }
+              }
+            },
+            "difficulty": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "enum": {
+                  "type": "array",
+                  "example": [
+                    "Easy",
+                    "Medium",
+                    "Hard"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Easy"
+                }
+              }
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "enum": {
+                  "type": "array",
+                  "example": [
+                    "Appetizer",
+                    "Main Course",
+                    "Dessert",
+                    "Beverage",
+                    "Snack",
+                    "Breakfast"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Dessert"
+                }
+              }
+            },
+            "author": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "507f1f77bcf86cd799439011"
+                        }
                       }
+                    },
+                    "name": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "John Doe"
+                        }
+                      }
+                    },
+                    "email": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "john@example.com"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "nutrition": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "calories": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "number"
+                        },
+                        "example": {
+                          "type": "number",
+                          "example": 250
+                        }
+                      }
+                    },
+                    "protein": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "number"
+                        },
+                        "example": {
+                          "type": "number",
+                          "example": 3
+                        }
+                      }
+                    },
+                    "carbs": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "number"
+                        },
+                        "example": {
+                          "type": "number",
+                          "example": 35
+                        }
+                      }
+                    },
+                    "fat": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "number"
+                        },
+                        "example": {
+                          "type": "number",
+                          "example": 12
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "tags": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "type": "array",
+                  "example": [
+                    "vegetarian",
+                    "dessert",
+                    "baking"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "servings": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "number"
+                },
+                "example": {
+                  "type": "number",
+                  "example": 24
+                }
+              }
+            },
+            "isPublic": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "boolean"
+                },
+                "example": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            },
+            "createdAt": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "format": {
+                  "type": "string",
+                  "example": "date-time"
+                }
+              }
+            },
+            "updatedAt": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "format": {
+                  "type": "string",
+                  "example": "date-time"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "example": "object"
+        },
+        "properties": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "boolean"
+                },
+                "example": {
+                  "type": "boolean",
+                  "example": false
+                }
+              }
+            },
+            "error": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Error message"
+                }
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
                     }
                   }
                 }
