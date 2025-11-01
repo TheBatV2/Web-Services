@@ -61,7 +61,7 @@
           "Authentication"
         ],
         "summary": "Get current authenticated user",
-        "description": "Returns the currently authenticated user",
+        "description": "Returns the currently authenticated user\\'s information. Use this to test if authentication is working.",
         "responses": {
           "200": {
             "description": "Current user retrieved successfully",
@@ -82,7 +82,7 @@
             }
           },
           "401": {
-            "description": "User not authenticated",
+            "description": "User not authenticated - try GET /api/auth/google first",
             "schema": {
               "type": "object",
               "properties": {
@@ -105,10 +105,20 @@
     },
     "/api/auth/google": {
       "get": {
-        "description": "",
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "🚨 IMPORTANT: Do NOT use Execute button!",
+        "description": "OAuth requires browser redirect. COPY this URL and paste in new browser tab: http://localhost:3000/api/auth/google. After login, return here and test protected endpoints.",
         "responses": {
-          "default": {
-            "description": ""
+          "302": {
+            "description": "Redirect to Google OAuth (only works in browser, not AJAX)",
+            "headers": {
+              "Location": {
+                "description": "Google OAuth URL",
+                "type": "string"
+              }
+            }
           }
         }
       }

@@ -9,7 +9,7 @@ router.get('/current-user', (req, res) => {
   /*
     #swagger.tags = ['Authentication']
     #swagger.summary = 'Get current authenticated user'
-    #swagger.description = 'Returns the currently authenticated user's information'
+    #swagger.description = 'Returns the currently authenticated user\'s information. Use this to test if authentication is working.'
     #swagger.responses[200] = {
       description: 'Current user retrieved successfully',
       schema: {
@@ -18,7 +18,7 @@ router.get('/current-user', (req, res) => {
       }
     }
     #swagger.responses[401] = {
-      description: 'User not authenticated',
+      description: 'User not authenticated - try GET /api/auth/google first',
       schema: {
         success: false,
         message: 'Not authenticated'
@@ -28,12 +28,13 @@ router.get('/current-user', (req, res) => {
   if (req.user) {
     res.status(200).json({
       success: true,
+      message: 'Authentication successful! You can now use protected endpoints.',
       data: req.user
     });
   } else {
     res.status(401).json({
       success: false,
-      message: 'Not authenticated'
+      message: 'Not authenticated. Please login via GET /api/auth/google first.'
     });
   }
 });
@@ -41,14 +42,25 @@ router.get('/current-user', (req, res) => {
 // @desc    Start Google OAuth flow
 // @route   GET /api/auth/google
 // @access  Public
-router.get('/google', passport.authenticate('google', {
-  scope: ['profile', 'email']
-}));
-/*
-  #swagger.tags = ['Authentication']
-  #swagger.summary = 'Start Google OAuth authentication'
-  #swagger.description = 'Redirects user to Google OAuth consent screen'
-*/
+router.get('/google', 
+  /*
+    #swagger.tags = ['Authentication']
+    #swagger.summary = '🚨 IMPORTANT: Do NOT use Execute button!'
+    #swagger.description = 'OAuth requires browser redirect. COPY this URL and paste in new browser tab: http://localhost:3000/api/auth/google. OR This if Online: https://recipe-project-f7mh.onrender.com/api/auth/google. After login, return here and test protected endpoints.'
+    #swagger.responses[302] = {
+      description: 'Redirect to Google OAuth (only works in browser, not AJAX)',
+      headers: {
+        Location: {
+          description: 'Google OAuth URL',
+          type: 'string'
+        }
+      }
+    }
+  */
+  passport.authenticate('google', {
+    scope: ['profile', 'email']
+  })
+);
 
 // @desc    Google OAuth callback
 // @route   GET /api/auth/google/callback
