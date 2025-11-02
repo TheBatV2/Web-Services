@@ -5,14 +5,23 @@ const User = require('../models/User');
 // Configure Google OAuth strategy only if credentials are provided
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   // Dynamic callback URL based on environment
-  // Check if running on Render (they set RENDER env variable)
-  const isRender = process.env.RENDER || process.env.NODE_ENV === 'production';
+  // Render sets RENDER_SERVICE_ID when deployed
+  const isRender = process.env.RENDER_SERVICE_ID || 
+                   process.env.RENDER || 
+                   process.env.NODE_ENV === 'production' ||
+                   process.env.PORT; // Render typically sets PORT
+  
   const baseURL = isRender 
     ? 'https://recipe-project-f7mh.onrender.com' 
     : (process.env.CLIENT_URL || 'http://localhost:3000');
   const callbackURL = `${baseURL}/api/auth/google/callback`;
   
-  console.log(`🌍 Environment: ${isRender ? 'Production (Render)' : 'Development'}`);
+  console.log(`🌍 Environment Variables Check:`);
+  console.log(`   - RENDER_SERVICE_ID: ${process.env.RENDER_SERVICE_ID || 'NOT SET'}`);
+  console.log(`   - RENDER: ${process.env.RENDER || 'NOT SET'}`);
+  console.log(`   - NODE_ENV: ${process.env.NODE_ENV || 'NOT SET'}`);
+  console.log(`   - PORT: ${process.env.PORT || 'NOT SET'}`);
+  console.log(`🌍 Detected Environment: ${isRender ? 'Production (Render)' : 'Development'}`);
   console.log(`🔗 OAuth Callback URL: ${callbackURL}`);
   console.log(`🔑 Client ID: ${process.env.GOOGLE_CLIENT_ID ? 'SET' : 'NOT SET'}`);
   console.log(`🔐 Client Secret: ${process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT SET'}`);
