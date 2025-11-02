@@ -78,7 +78,19 @@ app.use((error, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
+  // Determine the correct base URL based on environment
+  const isRender = process.env.RENDER_URL || 
+                   process.env.RENDER_SERVICE_ID || 
+                   process.env.RENDER || 
+                   process.env.NODE_ENV === 'production' ||
+                   (process.env.PORT && process.env.PORT !== '3000');
+  
+  const baseURL = isRender 
+    ? (process.env.RENDER_URL || 'https://recipe-project-f7mh.onrender.com')
+    : `http://localhost:${PORT}`;
+  
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📖 API Documentation: http://localhost:${PORT}/api-docs`);
-  console.log(`🔗 API Base URL: http://localhost:${PORT}/api`);
+  console.log(`📖 API Documentation: ${baseURL}/api-docs`);
+  console.log(`🔗 API Base URL: ${baseURL}/api`);
+  console.log(`🌍 Environment: ${isRender ? 'Production (Render)' : 'Development'}`);
 });
