@@ -109,7 +109,7 @@
           "Authentication"
         ],
         "summary": "🚨 IMPORTANT: Do NOT use Execute button!",
-        "description": "OAuth requires browser redirect. COPY this URL and paste in new browser tab: http://localhost:3000/api/auth/google. After login, return here and test protected endpoints.",
+        "description": "OAuth requires browser redirect. COPY this URL and paste in new browser tab: http://localhost:3000/api/auth/google. OR This if Online: https://recipe-project-f7mh.onrender.com/api/auth/google. After login, return here and test protected endpoints.",
         "responses": {
           "302": {
             "description": "Redirect to Google OAuth (only works in browser, not AJAX)",
