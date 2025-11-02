@@ -5,11 +5,17 @@ const User = require('../models/User');
 // Configure Google OAuth strategy only if credentials are provided
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   // Dynamic callback URL based on environment
-  const baseURL = process.env.NODE_ENV === 'production' 
+  // Check if running on Render (they set RENDER env variable)
+  const isRender = process.env.RENDER || process.env.NODE_ENV === 'production';
+  const baseURL = isRender 
     ? 'https://recipe-project-f7mh.onrender.com' 
     : (process.env.CLIENT_URL || 'http://localhost:3000');
   const callbackURL = `${baseURL}/api/auth/google/callback`;
+  
+  console.log(`🌍 Environment: ${isRender ? 'Production (Render)' : 'Development'}`);
   console.log(`🔗 OAuth Callback URL: ${callbackURL}`);
+  console.log(`🔑 Client ID: ${process.env.GOOGLE_CLIENT_ID ? 'SET' : 'NOT SET'}`);
+  console.log(`🔐 Client Secret: ${process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT SET'}`);
   
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
