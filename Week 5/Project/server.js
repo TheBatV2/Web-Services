@@ -22,8 +22,21 @@ const app = express();
 connectDB();
 
 // Middleware
+// Dynamic CORS origin based on environment
+const isRender = process.env.RENDER_URL || 
+                 process.env.RENDER_SERVICE_ID || 
+                 process.env.RENDER || 
+                 process.env.NODE_ENV === 'production' ||
+                 (process.env.PORT && process.env.PORT !== '3000');
+
+const corsOrigin = isRender 
+  ? 'https://recipe-project-f7mh.onrender.com'
+  : (process.env.CLIENT_URL || 'http://localhost:3000');
+
+console.log(`🌐 CORS Origin: ${corsOrigin}`);
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: corsOrigin,
   credentials: true
 }));
 
