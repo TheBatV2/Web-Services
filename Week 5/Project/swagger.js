@@ -1,13 +1,28 @@
 const swaggerAutogen = require('swagger-autogen')();
 
+// Dynamic host based on environment
+const isRender = process.env.RENDER_URL || 
+                 process.env.RENDER_SERVICE_ID || 
+                 process.env.RENDER || 
+                 process.env.NODE_ENV === 'production' ||
+                 (process.env.PORT && process.env.PORT !== '3000');
+
+const host = isRender 
+  ? 'recipe-project-f7mh.onrender.com'
+  : `localhost:${process.env.PORT || 3000}`;
+
+const schemes = isRender ? ['https'] : ['http'];
+
+console.log(`📝 Swagger Generation - Host: ${host}, Schemes: ${schemes.join(', ')}`);
+
 const doc = {
   info: {
     title: 'Recipe Management API',
     description: 'API for managing recipes with full CRUD operations and OAuth authentication',
     version: '1.0.0',
   },
-  host: 'localhost:3000',
-  schemes: ['http', 'https'],
+  host: host,
+  schemes: schemes,
   consumes: ['application/json'],
   produces: ['application/json'],
   tags: [
