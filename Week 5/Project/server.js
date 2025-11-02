@@ -4,7 +4,17 @@ const session = require('express-session');
 const passport = require('./config/passport');
 const connectDB = require('./config/database');
 const swaggerUi = require('swagger-ui-express');
+const { execSync } = require('child_process');
 require('dotenv').config();
+
+// Regenerate Swagger documentation on startup to ensure correct host
+console.log('🔄 Regenerating Swagger documentation with current environment...');
+try {
+  execSync('node swagger.js', { stdio: 'inherit' });
+  console.log('✅ Swagger documentation regenerated successfully!');
+} catch (error) {
+  console.error('❌ Failed to regenerate Swagger documentation:', error.message);
+}
 
 const app = express();
 
