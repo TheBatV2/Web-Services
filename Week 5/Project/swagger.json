@@ -5,7 +5,7 @@
     "description": "API for managing recipes with full CRUD operations and OAuth authentication",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "recipe-project-f7mh.onrender.com",
   "basePath": "/",
   "tags": [
     {
@@ -18,7 +18,7 @@
     }
   ],
   "schemes": [
-    "http"
+    "https"
   ],
   "securityDefinitions": {
     "cookieAuth": {

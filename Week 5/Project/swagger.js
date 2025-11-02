@@ -6,8 +6,9 @@ let host, schemes;
 // Check for explicit SWAGGER_HOST environment variable first
 if (process.env.SWAGGER_HOST) {
   host = process.env.SWAGGER_HOST;
-  schemes = process.env.SWAGGER_HOST.includes('https') ? ['https'] : ['http'];
-  console.log(`📝 Swagger Generation - Using explicit SWAGGER_HOST: ${host}`);
+  // If it's the Render domain, use HTTPS; otherwise detect from the host string
+  schemes = (host.includes('onrender.com') || host.includes('https')) ? ['https'] : ['http'];
+  console.log(`📝 Swagger Generation - Using explicit SWAGGER_HOST: ${host}, Schemes: ${schemes.join(', ')}`);
 } else {
   // Auto-detect environment
   const isRender = process.env.RENDER_URL || 
