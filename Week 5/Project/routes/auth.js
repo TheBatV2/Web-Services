@@ -73,15 +73,15 @@ router.get('/google/callback',
       #swagger.summary = 'Google OAuth callback'
       #swagger.description = 'Handles the callback from Google OAuth and redirects user'
     */
-    // Successful authentication, redirect to API docs to test authenticated endpoints
+    // Successful authentication, redirect to auth test page
     const isRender = process.env.RENDER_URL || 
                      process.env.RENDER_SERVICE_ID || 
                      process.env.RENDER || 
                      process.env.NODE_ENV === 'production';
     
     const redirectUrl = isRender 
-      ? 'https://recipe-project-f7mh.onrender.com/api-docs'
-      : 'http://localhost:3000/api-docs';
+      ? 'https://recipe-project-f7mh.onrender.com/public/auth-test.html'
+      : 'http://localhost:3000/public/auth-test.html';
     
     res.redirect(redirectUrl);
   }
