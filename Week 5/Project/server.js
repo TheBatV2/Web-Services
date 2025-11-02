@@ -46,14 +46,23 @@ app.use(express.urlencoded({ extended: false }));
 // Serve static files
 app.use('/public', express.static('public'));
 
-// Session configuration
+// Session configuration with improved settings for production
+const isProduction = process.env.NODE_ENV === 'production' || 
+                     process.env.RENDER_URL || 
+                     process.env.RENDER_SERVICE_ID;
+
+console.log(`🍪 Session Configuration - Production: ${isProduction}`);
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
   resave: false,
   saveUninitialized: false,
+  name: 'recipe-session', // Custom session name
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    secure: isProduction, // Use HTTPS in production
+    httpOnly: true, // Prevent XSS attacks
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: isProduction ? 'none' : 'lax' // Allow cross-site cookies in production
   }
 }));
 

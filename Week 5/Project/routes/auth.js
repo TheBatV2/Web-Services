@@ -25,6 +25,12 @@ router.get('/current-user', (req, res) => {
       }
     }
   */
+  console.log('🔍 Current User Check:');
+  console.log('   - Session ID:', req.sessionID);
+  console.log('   - Session:', req.session ? 'EXISTS' : 'MISSING');
+  console.log('   - User:', req.user ? 'AUTHENTICATED' : 'NOT AUTHENTICATED');
+  console.log('   - Passport Session:', req.session?.passport);
+  
   if (req.user) {
     res.status(200).json({
       success: true,
@@ -73,6 +79,11 @@ router.get('/google/callback',
       #swagger.summary = 'Google OAuth callback'
       #swagger.description = 'Handles the callback from Google OAuth and redirects user'
     */
+    console.log('🎯 OAuth Callback Success:');
+    console.log('   - Session ID:', req.sessionID);
+    console.log('   - User:', req.user ? 'AUTHENTICATED' : 'NOT AUTHENTICATED');
+    console.log('   - User Data:', req.user ? req.user.email : 'None');
+    
     // Successful authentication, redirect to auth test page
     const isRender = process.env.RENDER_URL || 
                      process.env.RENDER_SERVICE_ID || 
