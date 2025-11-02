@@ -4,9 +4,10 @@
   "description": "Recipe Management System API with Node.js, MongoDB, and OAuth",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node swagger.js && node server.js",
     "dev": "nodemon server.js",
-    "swagger": "node swagger.js"
+    "swagger": "node swagger.js",
+    "build": "node swagger.js"
   },
   "keywords": [
     "recipe",
