@@ -5,23 +5,37 @@ const User = require('../models/User');
 // Configure Google OAuth strategy only if credentials are provided
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   // Dynamic callback URL based on environment
-  // Render sets RENDER_SERVICE_ID when deployed
-  const isRender = process.env.RENDER_SERVICE_ID || 
-                   process.env.RENDER || 
-                   process.env.NODE_ENV === 'production' ||
-                   process.env.PORT; // Render typically sets PORT
+  // First check if we explicitly set RENDER_URL
+  let baseURL;
+  let isRender = false;
   
-  const baseURL = isRender 
-    ? 'https://recipe-project-f7mh.onrender.com' 
-    : (process.env.CLIENT_URL || 'http://localhost:3000');
+  if (process.env.RENDER_URL) {
+    // Explicit Render URL set
+    baseURL = process.env.RENDER_URL;
+    isRender = true;
+  } else if (process.env.RENDER_SERVICE_ID || 
+             process.env.RENDER || 
+             process.env.NODE_ENV === 'production' ||
+             (process.env.PORT && process.env.PORT !== '3000')) {
+    // Auto-detect Render environment
+    baseURL = 'https://recipe-project-f7mh.onrender.com';
+    isRender = true;
+  } else {
+    // Local development
+    baseURL = process.env.CLIENT_URL || 'http://localhost:3000';
+  }
+  
   const callbackURL = `${baseURL}/api/auth/google/callback`;
   
   console.log(`🌍 Environment Variables Check:`);
+  console.log(`   - RENDER_URL: ${process.env.RENDER_URL || 'NOT SET'}`);
   console.log(`   - RENDER_SERVICE_ID: ${process.env.RENDER_SERVICE_ID || 'NOT SET'}`);
   console.log(`   - RENDER: ${process.env.RENDER || 'NOT SET'}`);
   console.log(`   - NODE_ENV: ${process.env.NODE_ENV || 'NOT SET'}`);
   console.log(`   - PORT: ${process.env.PORT || 'NOT SET'}`);
+  console.log(`   - CLIENT_URL: ${process.env.CLIENT_URL || 'NOT SET'}`);
   console.log(`🌍 Detected Environment: ${isRender ? 'Production (Render)' : 'Development'}`);
+  console.log(`🔗 Base URL: ${baseURL}`);
   console.log(`🔗 OAuth Callback URL: ${callbackURL}`);
   console.log(`🔑 Client ID: ${process.env.GOOGLE_CLIENT_ID ? 'SET' : 'NOT SET'}`);
   console.log(`🔐 Client Secret: ${process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT SET'}`);
