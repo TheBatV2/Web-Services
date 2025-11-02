@@ -1,19 +1,30 @@
 const swaggerAutogen = require('swagger-autogen')();
 
-// Dynamic host based on environment
-const isRender = process.env.RENDER_URL || 
-                 process.env.RENDER_SERVICE_ID || 
-                 process.env.RENDER || 
-                 process.env.NODE_ENV === 'production' ||
-                 (process.env.PORT && process.env.PORT !== '3000');
+// Dynamic host based on environment - more explicit detection
+let host, schemes;
 
-const host = isRender 
-  ? 'recipe-project-f7mh.onrender.com'
-  : `localhost:${process.env.PORT || 3000}`;
+// Check for explicit SWAGGER_HOST environment variable first
+if (process.env.SWAGGER_HOST) {
+  host = process.env.SWAGGER_HOST;
+  schemes = process.env.SWAGGER_HOST.includes('https') ? ['https'] : ['http'];
+  console.log(`📝 Swagger Generation - Using explicit SWAGGER_HOST: ${host}`);
+} else {
+  // Auto-detect environment
+  const isRender = process.env.RENDER_URL || 
+                   process.env.RENDER_SERVICE_ID || 
+                   process.env.RENDER || 
+                   process.env.NODE_ENV === 'production' ||
+                   (process.env.PORT && process.env.PORT !== '3000');
 
-const schemes = isRender ? ['https'] : ['http'];
+  host = isRender 
+    ? 'recipe-project-f7mh.onrender.com'
+    : `localhost:${process.env.PORT || 3000}`;
 
-console.log(`📝 Swagger Generation - Host: ${host}, Schemes: ${schemes.join(', ')}`);
+  schemes = isRender ? ['https'] : ['http'];
+  console.log(`📝 Swagger Generation - Auto-detected Host: ${host}, Environment: ${isRender ? 'Production' : 'Development'}`);
+}
+
+console.log(`📝 Swagger Generation - Final Host: ${host}, Schemes: ${schemes.join(', ')}`);
 
 const doc = {
   info: {
