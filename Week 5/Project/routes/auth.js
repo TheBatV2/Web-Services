@@ -92,8 +92,8 @@ router.get('/google/callback',
         console.log('✅ Session saved successfully');
       }
       
-      // Use relative redirect to preserve session
-      res.redirect('/public/auth-test.html');
+      // Redirect back to Swagger UI after successful authentication
+      res.redirect('/api-docs');
     });
   }
 );
