@@ -84,17 +84,17 @@ router.get('/google/callback',
     console.log('   - User:', req.user ? 'AUTHENTICATED' : 'NOT AUTHENTICATED');
     console.log('   - User Data:', req.user ? req.user.email : 'None');
     
-    // Successful authentication, redirect to auth test page
-    const isRender = process.env.RENDER_URL || 
-                     process.env.RENDER_SERVICE_ID || 
-                     process.env.RENDER || 
-                     process.env.NODE_ENV === 'production';
-    
-    const redirectUrl = isRender 
-      ? 'https://recipe-project-f7mh.onrender.com/public/auth-test.html'
-      : 'http://localhost:3000/public/auth-test.html';
-    
-    res.redirect(redirectUrl);
+    // Force session save before redirect
+    req.session.save((err) => {
+      if (err) {
+        console.error('❌ Session save error:', err);
+      } else {
+        console.log('✅ Session saved successfully');
+      }
+      
+      // Use relative redirect to preserve session
+      res.redirect('/public/auth-test.html');
+    });
   }
 );
 

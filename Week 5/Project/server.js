@@ -55,6 +55,7 @@ const isProduction = process.env.NODE_ENV === 'production' ||
                      process.env.RENDER_SERVICE_ID;
 
 console.log(`🍪 Session Configuration - Production: ${isProduction}`);
+console.log(`🔑 Session Secret: ${process.env.SESSION_SECRET ? 'SET' : 'USING DEFAULT'}`);
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
@@ -66,7 +67,10 @@ app.use(session({
     httpOnly: true, // Prevent XSS attacks
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     sameSite: 'lax' // Use 'lax' for better compatibility in production
-  }
+  },
+  // Force session store configuration
+  rolling: true, // Reset expiration on activity
+  proxy: isProduction // Trust proxy headers in production
 }));
 
 // Passport middleware
