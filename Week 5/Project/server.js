@@ -65,13 +65,26 @@ app.use(session({
     secure: isProduction, // Use HTTPS in production
     httpOnly: true, // Prevent XSS attacks
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: isProduction ? 'none' : 'lax' // Allow cross-site cookies in production
+    sameSite: 'lax' // Use 'lax' for better compatibility in production
   }
 }));
 
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Debug middleware for session tracking
+app.use((req, res, next) => {
+  if (req.url.includes('/api/auth') || req.url.includes('/auth-test')) {
+    console.log(`🔍 Session Debug [${req.method} ${req.url}]:`, {
+      sessionID: req.sessionID,
+      hasSession: !!req.session,
+      hasUser: !!req.user,
+      userEmail: req.user?.email || 'None'
+    });
+  }
+  next();
+});
 
 // Routes
 app.use('/api', require('./routes/index'));
