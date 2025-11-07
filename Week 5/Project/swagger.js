@@ -3,6 +3,13 @@ const swaggerAutogen = require('swagger-autogen')();
 // Dynamic host based on environment - more explicit detection
 let host, schemes;
 
+// Auto-detect environment first
+const isRender = process.env.RENDER_URL || 
+                 process.env.RENDER_SERVICE_ID || 
+                 process.env.RENDER || 
+                 process.env.NODE_ENV === 'production' ||
+                 (process.env.PORT && process.env.PORT !== '3000');
+
 // Check for explicit SWAGGER_HOST environment variable first
 if (process.env.SWAGGER_HOST) {
   host = process.env.SWAGGER_HOST;
@@ -10,13 +17,6 @@ if (process.env.SWAGGER_HOST) {
   schemes = (host.includes('onrender.com') || host.includes('https')) ? ['https'] : ['http'];
   console.log(`📝 Swagger Generation - Using explicit SWAGGER_HOST: ${host}, Schemes: ${schemes.join(', ')}`);
 } else {
-  // Auto-detect environment
-  const isRender = process.env.RENDER_URL || 
-                   process.env.RENDER_SERVICE_ID || 
-                   process.env.RENDER || 
-                   process.env.NODE_ENV === 'production' ||
-                   (process.env.PORT && process.env.PORT !== '3000');
-
   host = isRender 
     ? 'recipe-project-f7mh.onrender.com'
     : `localhost:${process.env.PORT || 3000}`;
@@ -48,12 +48,37 @@ const doc = {
     }
   ],
   securityDefinitions: {
+    googleOAuth2: {
+      type: 'oauth2',
+      description: 'Google OAuth2 authentication. Click "Authorize" to login with Google.',
+      flow: 'authorizationCode',
+      authorizationUrl: isRender 
+        ? 'https://recipe-project-f7mh.onrender.com/api/auth/google'
+        : `http://localhost:${process.env.PORT || 3000}/api/auth/google`,
+      tokenUrl: isRender 
+        ? 'https://recipe-project-f7mh.onrender.com/api/auth/google/token'
+        : `http://localhost:${process.env.PORT || 3000}/api/auth/google/token`,
+      scopes: {
+        'openid': 'OpenID Connect',
+        'profile': 'Access user profile',
+        'email': 'Access user email'
+      }
+    },
     cookieAuth: {
       type: 'apiKey',
       in: 'cookie',
-      name: 'connect.sid'
+      name: 'connect.sid',
+      description: 'Session cookie authentication (automatically set after OAuth login)'
     }
   },
+  security: [
+    {
+      googleOAuth2: ['openid', 'profile', 'email']
+    },
+    {
+      cookieAuth: []
+    }
+  ],
   definitions: {
     User: {
       type: 'object',

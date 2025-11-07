@@ -5,7 +5,7 @@
     "description": "API for managing recipes with full CRUD operations and OAuth authentication",
     "version": "1.0.0"
   },
-  "host": "recipe-project-f7mh.onrender.com",
+  "host": "localhost:3000",
   "basePath": "/",
   "tags": [
     {
@@ -18,13 +18,26 @@
     }
   ],
   "schemes": [
-    "https"
+    "http"
   ],
   "securityDefinitions": {
+    "googleOAuth2": {
+      "type": "oauth2",
+      "description": "Google OAuth2 authentication. Click \"Authorize\" to login with Google.",
+      "flow": "authorizationCode",
+      "authorizationUrl": "http://localhost:3000/api/auth/google",
+      "tokenUrl": "http://localhost:3000/api/auth/google/token",
+      "scopes": {
+        "openid": "OpenID Connect",
+        "profile": "Access user profile",
+        "email": "Access user email"
+      }
+    },
     "cookieAuth": {
       "type": "apiKey",
       "in": "cookie",
-      "name": "connect.sid"
+      "name": "connect.sid",
+      "description": "Session cookie authentication (automatically set after OAuth login)"
     }
   },
   "consumes": [
@@ -1016,5 +1029,17 @@
         }
       }
     }
-  }
+  },
+  "security": [
+    {
+      "googleOAuth2": [
+        "openid",
+        "profile",
+        "email"
+      ]
+    },
+    {
+      "cookieAuth": []
+    }
+  ]
 }

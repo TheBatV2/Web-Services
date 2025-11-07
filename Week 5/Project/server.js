@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
@@ -5,7 +6,6 @@ const passport = require('./config/passport');
 const connectDB = require('./config/database');
 const swaggerUi = require('swagger-ui-express');
 const { execSync } = require('child_process');
-require('dotenv').config();
 
 // Regenerate Swagger documentation on startup to ensure correct host
 console.log('🔄 Regenerating Swagger documentation with current environment...');
@@ -17,6 +17,9 @@ try {
 }
 
 const app = express();
+
+// Define PORT early so it can be used throughout the file
+const PORT = process.env.PORT || 3000;
 
 // Connect to database
 connectDB();
@@ -75,11 +78,36 @@ app.use('/api', require('./routes/index'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/recipes', require('./routes/recipes'));
 
-// Swagger Documentation
+// Swagger Documentation with OAuth2 configuration
 try {
+  console.log('🔍 Attempting to load swagger.json...');
   const swaggerDocument = require('./swagger.json');
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  console.log('✅ swagger.json loaded successfully');
+  
+  // Swagger UI options with OAuth2 configuration
+  const swaggerOptions = {
+    swaggerOptions: {
+      oauth2RedirectUrl: isRender 
+        ? 'https://recipe-project-f7mh.onrender.com/api-docs/oauth2-redirect.html'
+        : `http://localhost:${PORT}/api-docs/oauth2-redirect.html`,
+      initOAuth: {
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: '', // Don't expose client secret in frontend
+        realm: 'Recipe API',
+        appName: 'Recipe Management API',
+        scopeSeparator: ' ',
+        scopes: 'openid profile email',
+        additionalQueryStringParams: {},
+        useBasicAuthenticationWithAccessCodeGrant: false,
+        usePkceWithAuthorizationCodeGrant: false
+      }
+    }
+  };
+  
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
+  console.log(`📝 Swagger OAuth2 Configuration: ${isRender ? 'Production' : 'Development'} mode`);
 } catch (error) {
+  console.log('❌ Swagger documentation error:', error.message);
   console.log('⚠️  Swagger documentation not found. Run "npm run swagger" to generate it.');
 }
 
@@ -109,8 +137,6 @@ app.use((error, req, res, next) => {
     error: 'Something went wrong on the server'
   });
 });
-
-const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   // Determine the correct base URL based on environment
