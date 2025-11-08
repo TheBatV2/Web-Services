@@ -292,21 +292,83 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": ["Recipes"],
+        "summary": "Create a new recipe",
+        "description": "Add a new recipe to the database. All fields marked as required must be provided.",
+        "consumes": ["application/json"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Recipe data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["title", "description", "ingredients", "instructions", "cookTime", "difficulty", "category", "servings"],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "Chocolate Chip Cookies"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Delicious homemade chocolate chip cookies"
+                },
+                "ingredients": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["2 cups flour", "1 cup sugar", "1/2 cup chocolate chips", "1/2 cup butter"]
+                },
+                "instructions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["Mix dry ingredients", "Add wet ingredients", "Bake for 12 minutes at 350F"]
+                },
+                "cookTime": {
+                  "type": "number",
+                  "example": 25
+                },
+                "difficulty": {
+                  "type": "string",
+                  "enum": ["Easy", "Medium", "Hard"],
+                  "example": "Easy"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": ["Appetizer", "Main Course", "Dessert", "Beverage", "Snack", "Breakfast"],
+                  "example": "Dessert"
+                },
+                "servings": {
+                  "type": "number",
+                  "example": 24
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Recipe created successfully"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Validation error - missing or invalid fields"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized - authentication required"
           },
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       }
     },
     "/api/recipes/{id}": {
@@ -336,35 +398,96 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": ["Recipes"],
+        "summary": "Update an existing recipe",
+        "description": "Update a recipe by ID (requires ownership). All required fields must be provided.",
+        "consumes": ["application/json"],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Recipe ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Updated recipe data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["title", "description", "ingredients", "instructions", "cookTime", "difficulty", "category", "servings"],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "Updated Chocolate Chip Cookies"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Even more delicious homemade chocolate chip cookies"
+                },
+                "ingredients": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["2 cups flour", "1 cup brown sugar", "3/4 cup chocolate chips", "1/2 cup butter"]
+                },
+                "instructions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["Mix dry ingredients thoroughly", "Cream butter and sugar", "Combine all ingredients", "Bake for 10-12 minutes at 375F"]
+                },
+                "cookTime": {
+                  "type": "number",
+                  "example": 30
+                },
+                "difficulty": {
+                  "type": "string",
+                  "enum": ["Easy", "Medium", "Hard"],
+                  "example": "Medium"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": ["Appetizer", "Main Course", "Dessert", "Beverage", "Snack", "Breakfast"],
+                  "example": "Dessert"
+                },
+                "servings": {
+                  "type": "number",
+                  "example": 36
+                }
+              }
+            }
           }
         ],
         "responses": {
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "Recipe updated successfully"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Validation error - missing or invalid fields"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized - authentication required"
           },
           "403": {
-            "description": "Forbidden"
+            "description": "Forbidden - user doesn't own this recipe"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Recipe not found"
           },
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       },
       "delete": {
         "description": "",

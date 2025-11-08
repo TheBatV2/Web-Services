@@ -22,56 +22,56 @@ router.get('/:id', optionalAuth, getRecipeById);
 // @route   POST /api/recipes
 // @desc    Create new recipe
 // @access  Private (requires authentication)
-/*
-  #swagger.tags = ['Recipes']
-  #swagger.summary = 'Create a new recipe'
-  #swagger.description = 'Add a new recipe to the database. All fields marked as required must be provided.'
-  #swagger.security = [{ "cookieAuth": [] }]
-  #swagger.parameters['body'] = {
-    in: 'body',
-    description: 'Recipe data',
-    required: true,
-    schema: {
-      type: 'object',
-      required: ['title', 'description', 'ingredients', 'instructions', 'cookTime', 'difficulty', 'category', 'servings'],
-      properties: {
-        title: { type: 'string', example: 'Chocolate Chip Cookies' },
-        description: { type: 'string', example: 'Delicious homemade chocolate chip cookies' },
-        ingredients: { type: 'array', items: { type: 'string' }, example: ['2 cups flour', '1 cup sugar', '1/2 cup chocolate chips', '1/2 cup butter'] },
-        instructions: { type: 'array', items: { type: 'string' }, example: ['Mix dry ingredients', 'Add wet ingredients', 'Bake for 12 minutes at 350F'] },
-        cookTime: { type: 'number', example: 25 },
-        difficulty: { type: 'string', enum: ['Easy', 'Medium', 'Hard'], example: 'Easy' },
-        category: { type: 'string', enum: ['Appetizer', 'Main Course', 'Dessert', 'Beverage', 'Snack', 'Breakfast'], example: 'Dessert' },
-        servings: { type: 'number', example: 24 },
-        nutrition: { 
-          type: 'object', 
-          properties: {
-            calories: { type: 'number', example: 250 },
-            protein: { type: 'number', example: 3 },
-            carbs: { type: 'number', example: 35 },
-            fat: { type: 'number', example: 12 }
-          }
-        },
-        tags: { type: 'array', items: { type: 'string' }, example: ['vegetarian', 'dessert', 'baking'] },
-        isPublic: { type: 'boolean', example: true }
+/*  #swagger.tags = ['Recipes']
+    #swagger.summary = 'Create a new recipe'
+    #swagger.description = 'Add a new recipe to the database. All fields marked as required must be provided.'
+    #swagger.security = [{ "cookieAuth": [] }]
+    #swagger.consumes = ['application/json']
+    #swagger.parameters['body'] = {
+      in: 'body',
+      description: 'Recipe data',
+      required: true,
+      schema: {
+        type: 'object',
+        required: ['title', 'description', 'ingredients', 'instructions', 'cookTime', 'difficulty', 'category', 'servings'],
+        properties: {
+          title: { type: 'string', example: 'Chocolate Chip Cookies' },
+          description: { type: 'string', example: 'Delicious homemade chocolate chip cookies' },
+          ingredients: { type: 'array', items: { type: 'string' }, example: ['2 cups flour', '1 cup sugar', '1/2 cup chocolate chips', '1/2 cup butter'] },
+          instructions: { type: 'array', items: { type: 'string' }, example: ['Mix dry ingredients', 'Add wet ingredients', 'Bake for 12 minutes at 350F'] },
+          cookTime: { type: 'number', example: 25 },
+          difficulty: { type: 'string', enum: ['Easy', 'Medium', 'Hard'], example: 'Easy' },
+          category: { type: 'string', enum: ['Appetizer', 'Main Course', 'Dessert', 'Beverage', 'Snack', 'Breakfast'], example: 'Dessert' },
+          servings: { type: 'number', example: 24 },
+          nutrition: { 
+            type: 'object', 
+            properties: {
+              calories: { type: 'number', example: 250 },
+              protein: { type: 'number', example: 3 },
+              carbs: { type: 'number', example: 35 },
+              fat: { type: 'number', example: 12 }
+            }
+          },
+          tags: { type: 'array', items: { type: 'string' }, example: ['vegetarian', 'dessert', 'baking'] },
+          isPublic: { type: 'boolean', example: true }
+        }
       }
     }
-  }
-  #swagger.responses[201] = {
-    description: 'Recipe created successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean', example: true },
-        message: { type: 'string', example: 'Recipe created successfully' },
-        data: { $ref: '#/definitions/Recipe' }
+    #swagger.responses[201] = {
+      description: 'Recipe created successfully',
+      schema: {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean', example: true },
+          message: { type: 'string', example: 'Recipe created successfully' },
+          data: { $ref: '#/definitions/Recipe' }
+        }
       }
     }
-  }
-  #swagger.responses[400] = {
-    description: 'Validation error',
-    schema: { $ref: '#/definitions/Error' }
-  }
+    #swagger.responses[400] = {
+      description: 'Validation error',
+      schema: { $ref: '#/definitions/Error' }
+    }
 */
 router.post('/', requireAuth, createRecipe);
 
@@ -83,6 +83,7 @@ router.post('/', requireAuth, createRecipe);
   #swagger.summary = 'Update an existing recipe'
   #swagger.description = 'Update a recipe by ID (requires ownership). All fields marked as required must be provided.'
   #swagger.security = [{ "cookieAuth": [] }]
+  #swagger.consumes = ['application/json']
   #swagger.parameters['id'] = {
     in: 'path',
     description: 'Recipe ID',
