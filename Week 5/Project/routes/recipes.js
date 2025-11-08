@@ -12,12 +12,80 @@ const {
 // @route   GET /api/recipes
 // @desc    Get all recipes (with optional filters)
 // @access  Public
-router.get('/', optionalAuth, getRecipes);
+router.get('/', optionalAuth, async (req, res) => {
+  /*
+    #swagger.tags = ['Recipes']
+    #swagger.summary = 'Get all recipes'
+    #swagger.description = 'Retrieve all recipes with optional filtering by category, difficulty, or search term'
+    #swagger.parameters['category'] = {
+      in: 'query',
+      description: 'Filter by recipe category',
+      required: false,
+      type: 'string',
+      enum: ['Appetizer', 'Main Course', 'Dessert', 'Beverage', 'Snack', 'Breakfast']
+    }
+    #swagger.parameters['difficulty'] = {
+      in: 'query',
+      description: 'Filter by recipe difficulty',
+      required: false,
+      type: 'string',
+      enum: ['Easy', 'Medium', 'Hard']
+    }
+    #swagger.parameters['search'] = {
+      in: 'query',
+      description: 'Search recipes by title or ingredients',
+      required: false,
+      type: 'string'
+    }
+    #swagger.responses[200] = {
+      description: 'Recipes retrieved successfully',
+      schema: {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean', example: true },
+          data: { 
+            type: 'array',
+            items: { $ref: '#/definitions/Recipe' }
+          },
+          total: { type: 'number', example: 25 }
+        }
+      }
+    }
+  */
+  return getRecipes(req, res);
+});
 
 // @route   GET /api/recipes/:id
 // @desc    Get recipe by ID
 // @access  Public
-router.get('/:id', optionalAuth, getRecipeById);
+router.get('/:id', optionalAuth, async (req, res) => {
+  /*
+    #swagger.tags = ['Recipes']
+    #swagger.summary = 'Get recipe by ID'
+    #swagger.description = 'Retrieve a specific recipe by its ID'
+    #swagger.parameters['id'] = {
+      in: 'path',
+      description: 'Recipe ID',
+      required: true,
+      type: 'string'
+    }
+    #swagger.responses[200] = {
+      description: 'Recipe retrieved successfully',
+      schema: {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean', example: true },
+          data: { $ref: '#/definitions/Recipe' }
+        }
+      }
+    }
+    #swagger.responses[404] = {
+      description: 'Recipe not found',
+      schema: { $ref: '#/definitions/Error' }
+    }
+  */
+  return getRecipeById(req, res);
+});
 
 // @route   POST /api/recipes
 // @desc    Create new recipe

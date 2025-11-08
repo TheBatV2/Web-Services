@@ -47,29 +47,107 @@
     "application/json"
   ],
   "paths": {
-    "/": {
+    "/api/recipes/": {
       "get": {
-        "description": "",
+        "tags": [
+          "Recipes"
+        ],
+        "summary": "Get all recipes",
+        "description": "Retrieve all recipes with optional filtering by category, difficulty, or search term",
         "parameters": [
           {
             "name": "category",
             "in": "query",
-            "type": "string"
+            "description": "Filter by recipe category",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "Appetizer",
+              "Main Course",
+              "Dessert",
+              "Beverage",
+              "Snack",
+              "Breakfast"
+            ]
           },
           {
             "name": "difficulty",
             "in": "query",
-            "type": "string"
+            "description": "Filter by recipe difficulty",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "Easy",
+              "Medium",
+              "Hard"
+            ]
           },
           {
             "name": "search",
             "in": "query",
+            "description": "Search recipes by title or ingredients",
+            "required": false,
             "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Recipes retrieved successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "boolean"
+                        },
+                        "example": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "array"
+                        },
+                        "items": {
+                          "$ref": "#/definitions/Recipe"
+                        }
+                      }
+                    },
+                    "total": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "number"
+                        },
+                        "example": {
+                          "type": "number",
+                          "example": 25
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error"
@@ -163,12 +241,203 @@
         ]
       }
     },
-    "/api/": {
+    "/api/recipes/{id}": {
       "get": {
+        "tags": [
+          "Recipes"
+        ],
+        "summary": "Get recipe by ID",
+        "description": "Retrieve a specific recipe by its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Recipe ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recipe retrieved successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "boolean"
+                        },
+                        "example": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    },
+                    "data": {
+                      "$ref": "#/definitions/Recipe"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Recipe not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Recipes"
+        ],
+        "summary": "Update an existing recipe",
+        "description": "Update a recipe by ID (requires ownership). All fields marked as required must be provided.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Recipe ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Updated recipe data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Recipe"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recipe updated successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "boolean"
+                        },
+                        "example": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Recipe updated successfully"
+                        }
+                      }
+                    },
+                    "data": {
+                      "$ref": "#/definitions/Recipe"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Validation error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      },
+      "delete": {
         "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -364,637 +633,6 @@
           },
           "401": {
             "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/api/recipes/": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "category",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "difficulty",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Recipes"
-        ],
-        "summary": "Create a new recipe",
-        "description": "Add a new recipe to the database. All fields marked as required must be provided.",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Recipe data",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Recipe"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Recipe created successfully",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "object"
-                },
-                "properties": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "boolean"
-                        },
-                        "example": {
-                          "type": "boolean",
-                          "example": true
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "string"
-                        },
-                        "example": {
-                          "type": "string",
-                          "example": "Recipe created successfully"
-                        }
-                      }
-                    },
-                    "data": {
-                      "$ref": "#/definitions/Recipe"
-                    }
-                  }
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "cookieAuth": []
-          }
-        ]
-      }
-    },
-    "/api/recipes/{id}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Recipes"
-        ],
-        "summary": "Update an existing recipe",
-        "description": "Update a recipe by ID (requires ownership). All fields marked as required must be provided.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "Recipe ID"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Updated recipe data",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Recipe"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Recipe updated successfully",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "object"
-                },
-                "properties": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "boolean"
-                        },
-                        "example": {
-                          "type": "boolean",
-                          "example": true
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "string"
-                        },
-                        "example": {
-                          "type": "string",
-                          "example": "Recipe updated successfully"
-                        }
-                      }
-                    },
-                    "data": {
-                      "$ref": "#/definitions/Recipe"
-                    }
-                  }
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Validation error",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "cookieAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/current-user": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "Get current authenticated user",
-        "description": "Returns the currently authenticated user\\'s information. Use this to test if authentication is working.",
-        "responses": {
-          "200": {
-            "description": "Current user retrieved successfully",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                },
-                "data": {
-                  "$ref": "#/definitions/User"
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
-          "401": {
-            "description": "User not authenticated - try GET /api/auth/google first",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Not authenticated"
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/google": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "🚨 IMPORTANT: Do NOT use Execute button!",
-        "description": "OAuth requires browser redirect. COPY this URL and paste in new browser tab: http://localhost:3000/api/auth/google. OR This if Online: https://recipe-project-f7mh.onrender.com/api/auth/google. After login, return here and test protected endpoints.",
-        "responses": {
-          "302": {
-            "description": "Redirect to Google OAuth (only works in browser, not AJAX)",
-            "headers": {
-              "Location": {
-                "description": "Google OAuth URL",
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/google/callback": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "Google OAuth callback",
-        "description": "Handles the callback from Google OAuth and redirects user",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/logout": {
-      "post": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "Logout user",
-        "description": "Logs out the current user and destroys the session",
-        "responses": {
-          "200": {
-            "description": "User logged out successfully",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Logged out successfully"
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/profile": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "Get user profile",
-        "description": "Get detailed profile information for the authenticated user",
-        "responses": {
-          "200": {
-            "description": "Profile retrieved successfully",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                },
-                "data": {
-                  "$ref": "#/definitions/User"
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
-          "401": {
-            "description": "User not authenticated"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "Update user profile",
-        "description": "Update the authenticated user\\'s profile information",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Profile update data",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "bio": {
-                  "type": "string",
-                  "example": "string"
-                },
-                "dietaryPreferences": {
-                  "type": "array",
-                  "example": [
-                    "string"
-                  ],
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "cookingSkillLevel": {
-                  "type": "string",
-                  "example": "string"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/{id}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Recipes"
-        ],
-        "summary": "Update an existing recipe",
-        "description": "Update a recipe by ID (requires ownership). All fields marked as required must be provided.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "Recipe ID"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Updated recipe data",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Recipe"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Recipe updated successfully",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "example": "object"
-                },
-                "properties": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "boolean"
-                        },
-                        "example": {
-                          "type": "boolean",
-                          "example": true
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "example": "string"
-                        },
-                        "example": {
-                          "type": "string",
-                          "example": "Recipe updated successfully"
-                        }
-                      }
-                    },
-                    "data": {
-                      "$ref": "#/definitions/Recipe"
-                    }
-                  }
-                }
-              },
-              "xml": {
-                "name": "main"
-              }
-            }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Validation error",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "cookieAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }

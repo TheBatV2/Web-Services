@@ -246,8 +246,47 @@ const doc = {
 };
 
 const outputFile = './swagger.json';
-const endpointsFiles = ['./server.js', './routes/*.js'];
+const endpointsFiles = ['./routes/recipes.js', './routes/auth.js'];
 
 swaggerAutogen(outputFile, endpointsFiles, doc).then(() => {
   console.log('✅ Swagger documentation generated successfully!');
+  
+  // Post-process to fix paths
+  const fs = require('fs');
+  const swaggerDoc = JSON.parse(fs.readFileSync(outputFile, 'utf8'));
+  
+  const newPaths = {};
+  
+  // Fix recipe paths
+  Object.keys(swaggerDoc.paths).forEach(path => {
+    if (path.startsWith('/')) {
+      // For routes from recipes.js, add /api/recipes prefix
+      if (swaggerDoc.paths[path].get?.tags?.[0] === 'Recipes' || 
+          swaggerDoc.paths[path].post?.tags?.[0] === 'Recipes' ||
+          swaggerDoc.paths[path].put?.tags?.[0] === 'Recipes' ||
+          swaggerDoc.paths[path].delete?.tags?.[0] === 'Recipes') {
+        const newPath = path === '/' ? '/api/recipes/' : `/api/recipes${path}`;
+        newPaths[newPath] = swaggerDoc.paths[path];
+      }
+      // For routes from auth.js, add /api/auth prefix  
+      else if (swaggerDoc.paths[path].get?.tags?.[0] === 'Authentication' || 
+               swaggerDoc.paths[path].post?.tags?.[0] === 'Authentication' ||
+               swaggerDoc.paths[path].put?.tags?.[0] === 'Authentication' ||
+               swaggerDoc.paths[path].delete?.tags?.[0] === 'Authentication') {
+        const newPath = path === '/' ? '/api/auth/' : `/api/auth${path}`;
+        newPaths[newPath] = swaggerDoc.paths[path];
+      }
+      // Keep other paths as-is
+      else {
+        newPaths[path] = swaggerDoc.paths[path];
+      }
+    } else {
+      newPaths[path] = swaggerDoc.paths[path];
+    }
+  });
+  
+  swaggerDoc.paths = newPaths;
+  
+  fs.writeFileSync(outputFile, JSON.stringify(swaggerDoc, null, 2));
+  console.log('✅ Paths fixed successfully!');
 });
