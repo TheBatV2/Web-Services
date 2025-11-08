@@ -164,18 +164,38 @@ router.put('/:id', requireAuth, async (req, res) => {
 // @route   DELETE /api/recipes/:id
 // @desc    Delete recipe
 // @access  Private (requires authentication and ownership)
-/*
-  #swagger.tags = ['Recipes']
-  #swagger.summary = 'Delete a recipe'
-  #swagger.description = 'Delete a recipe by ID (requires ownership)'
-  #swagger.security = [{ "cookieAuth": [] }]
-  #swagger.parameters['id'] = {
-    in: 'path',
-    description: 'Recipe ID',
-    required: true,
-    type: 'string'
-  }
-*/
-router.delete('/:id', requireAuth, deleteRecipe);
+router.delete('/:id', requireAuth, async (req, res) => {
+  /*
+    #swagger.tags = ['Recipes']
+    #swagger.summary = 'Delete a recipe'
+    #swagger.description = 'Delete a recipe by ID (requires ownership)'
+    #swagger.security = [{ "cookieAuth": [] }]
+    #swagger.parameters['id'] = {
+      in: 'path',
+      description: 'Recipe ID',
+      required: true,
+      type: 'string'
+    }
+    #swagger.responses[200] = {
+      description: 'Recipe deleted successfully',
+      schema: {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean', example: true },
+          message: { type: 'string', example: 'Recipe deleted successfully' }
+        }
+      }
+    }
+    #swagger.responses[404] = {
+      description: 'Recipe not found',
+      schema: { $ref: '#/definitions/Error' }
+    }
+    #swagger.responses[403] = {
+      description: 'Forbidden - user doesn\'t own this recipe',
+      schema: { $ref: '#/definitions/Error' }
+    }
+  */
+  return deleteRecipe(req, res);
+});
 
 module.exports = router;
